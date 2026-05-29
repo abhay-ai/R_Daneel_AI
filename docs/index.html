@@ -706,7 +706,9 @@
       .hero-title {
         font-size: 2.6rem;
       }
-      /* Flow comparison diagrams styling */
+    }
+
+    /* Flow comparison diagrams styling */
     .comparison-diagrams {
       display: flex;
       flex-direction: column;
@@ -721,31 +723,63 @@
       padding: 1.2rem 1.5rem;
       gap: 1rem;
       transition: all 0.3s ease;
+      background: #ffffff;
+      border: 2px solid var(--panel-border);
     }
     .flow-row.traditional {
-      background: #fef2f2;
-      border: 1px solid #fee2e2;
+      background: #fff5f5;
+      border: 2px solid #ef4444;
     }
     .flow-row.traditional:hover {
-      background: #fde8e8;
-      border-color: #fca5a5;
+      background: #fee2e2;
     }
+    .flow-row.traditional .flow-step-node {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+    .flow-row.traditional .flow-step-node.end-node {
+      background: #ef4444;
+      border-color: #dc2626;
+      color: #ffffff;
+    }
+ 
     .flow-row.mimicry {
       background: #fffbeb;
-      border: 1px solid #fef3c7;
+      border: 2px solid #f59e0b;
     }
     .flow-row.mimicry:hover {
       background: #fef3c7;
-      border-color: #fcd34d;
     }
+    .flow-row.mimicry .flow-step-node {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      color: #92400e;
+    }
+    .flow-row.mimicry .flow-step-node.end-node {
+      background: #f59e0b;
+      border-color: #d97706;
+      color: #ffffff;
+    }
+ 
     .flow-row.ours {
-      background: #ecfeff;
-      border: 1px solid #cffafe;
+      background: #f0fdfa;
+      border: 2px solid #0891b2;
     }
     .flow-row.ours:hover {
-      background: #cffafe;
-      border-color: #67e8f9;
+      background: #ccfbf1;
     }
+    .flow-row.ours .flow-step-node {
+      background: #cffafe;
+      border: 1px solid #67e8f9;
+      color: #0e7490;
+    }
+    .flow-row.ours .flow-step-node.end-node {
+      background: #0891b2;
+      border-color: #0d9488;
+      color: #ffffff;
+    }
+ 
     .flow-label {
       min-width: 200px;
     }
@@ -757,37 +791,14 @@
       flex-wrap: wrap;
     }
     .flow-step-node {
-      background: #ffffff;
-      border: 1px solid var(--panel-border);
       border-radius: 8px;
       padding: 0.5rem 0.9rem;
       font-size: 0.88rem;
-      color: var(--text);
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.2s ease;
     }
     .flow-step-node.end-node {
       font-weight: bold;
-    }
-    .flow-row.traditional .flow-step-node.end-node {
-      background: #ef4444;
-      border-color: #dc2626;
-      color: #ffffff;
-    }
-    .flow-row.mimicry .flow-step-node.end-node {
-      background: #f59e0b;
-      border-color: #d97706;
-      color: #ffffff;
-    }
-    .flow-row.ours .flow-step-node.end-node {
-      background: #0891b2;
-      border-color: #0d9488;
-      color: #ffffff;
-    }
-    .flow-row.ours .flow-step-node.active-node {
-      border-color: #0891b2;
-      color: #09090b;
-      background: #ffffff;
     }
     .flow-arrow {
       color: var(--text-muted);
@@ -795,10 +806,16 @@
       font-size: 0.85rem;
       user-select: none;
     }
+    .flow-row.traditional .flow-arrow {
+      color: #ef4444;
+    }
+    .flow-row.mimicry .flow-arrow {
+      color: #f59e0b;
+    }
     .flow-row.ours .flow-arrow {
       color: #0891b2;
     }
-    @media (max-width: 800px) {
+    @media (max-width: 950px) {
       .flow-row {
         flex-direction: column;
         align-items: flex-start;
@@ -889,6 +906,8 @@
             </div>
             <div class="flow-steps">
               <div class="flow-step-node">Opponent's Move</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node active-node">LLM (Initial View)</div>
               <span class="flow-arrow">➔</span>
               <div class="flow-step-node active-node"><a href="https://abhay-ai.github.io/Queen/" style="color: inherit; text-decoration: none;">Queen</a> (Analysis)</div>
               <span class="flow-arrow">➔</span>
