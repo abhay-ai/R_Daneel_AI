@@ -898,7 +898,6 @@
     </div>
     <ul class="nav-links">
       <li><a href="#overview" class="active">Overview</a></li>
-      <li><a href="#architecture">Architecture</a></li>
       <li><a href="#playground">Interactive Play</a></li>
       <li><a href="#benchmark">Elo Benchmark</a></li>
     </ul>
@@ -906,6 +905,7 @@
     <div class="nav-footer">
       <p>Documentation built locally.</p>
       <p>Read the <a href="readme.html">Setup Guide →</a></p>
+      <p style="margin-top: 0.5rem;">Visit <a href="https://abhay-ai.github.io/Queen/" target="_blank">Queen →</a></p>
     </div>
   </aside>
 
@@ -914,10 +914,9 @@
     
     <!-- Hero / Overview Section -->
     <section id="overview" class="hero-container">
-      <div class="badge">Dual-Process Cognitive Architecture</div>
       <h2 class="hero-title">R_Daneel_AI</h2>
       <p class="hero-subtitle">
-        A chess bot that uses a Large Language Model to strategize, with <a href="https://abhay-ai.github.io/Queen/">Queen</a> acting as its sensory eyes. By pairing verbal planning with logical constraint validation, it plays chess through reasoning rather than brute-force calculation.
+        A chess bot that uses a Large Language Model to strategize, with <a href="https://abhay-ai.github.io/Queen/" target="_blank">Queen</a> acting as its sensory eyes. Powered by a local model served via <a href="https://github.com/vllm-project/vllm" target="_blank">vLLM</a> for maximum inference speed, the bot pairs verbal planning with logical constraint validation to play chess through reasoning rather than brute-force calculation.
       </p>
       
       <div class="glass-card" style="margin-top: 1rem;">
@@ -983,49 +982,6 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- Architecture Section -->
-    <section id="architecture">
-      <h2>System Architecture & Data Flow</h2>
-      <p>R_Daneel_AI maintains a clean separation of concerns, coupling a local neural inference server to a logical rulebase:</p>
-      
-      <div class="glass-card">
-        <div class="arch-flow">
-          <div class="flow-node">
-            <div class="flow-num">1</div>
-            <div class="flow-info">
-              <h4>Lichess API & Event Stream</h4>
-              <p>The python bot accepts private challenges from your main account and listens to the active match state in real-time via the <code>berserk</code> client.</p>
-            </div>
-          </div>
-          
-          <div class="flow-node">
-            <div class="flow-num cyan">2</div>
-            <div class="flow-info">
-              <h4>Prolog Pre-Analysis (<a href="https://abhay-ai.github.io/Queen/">Queen</a>)</h4>
-              <p>The bot parses the board FEN into Prolog variables and queries the <a href="https://abhay-ai.github.io/Queen/">Queen</a> package to retrieve all active pins, attacks, weak squares, passed pawns, and forced combinations.</p>
-            </div>
-          </div>
-
-          <div class="flow-node">
-            <div class="flow-num gold">3</div>
-            <div class="flow-info">
-              <h4>Local vLLM MoE Server</h4>
-              <p>An optimized local vLLM instance serving <code>Gemma-4-26B-AWQ</code> receives the prompt. Utilizing native tool-calling (<code>--tool-call-parser gemma4</code>), the model executes virtual simulations to check opponent counter-threats.</p>
-            </div>
-          </div>
-
-          <div class="flow-node">
-            <div class="flow-num">4</div>
-            <div class="flow-info">
-              <h4>Enforcement Guardrails & Move Submission</h4>
-              <p>The python framework checks if the LLM's proposed move was simulated during the turn. If not, it rejects it and forces simulation. Once verified, the legal move is published straight to Lichess.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Playground Section -->
     <section id="playground">
@@ -1127,19 +1083,19 @@
               <td style="padding: 1.5rem;"><strong>Puzzles Solved</strong></td>
               <td style="padding: 1.5rem;">80 / 500</td>
               <td style="padding: 1.5rem;"><strong>404 / 500</strong></td>
-              <td style="padding: 1.5rem; color: hsl(120, 80%, 65%); font-weight: bold;">+324 puzzles solved</td>
+              <td style="padding: 1.5rem; color: #15803d; font-weight: bold;">+324 puzzles solved</td>
             </tr>
             <tr>
               <td style="padding: 1.5rem;"><strong>Accuracy / Pass Rate</strong></td>
               <td style="padding: 1.5rem;">16.0%</td>
               <td style="padding: 1.5rem;"><strong>80.8%</strong></td>
-              <td style="padding: 1.5rem; color: hsl(120, 80%, 65%); font-weight: bold;">+64.8% accuracy boost</td>
+              <td style="padding: 1.5rem; color: #15803d; font-weight: bold;">+64.8% accuracy boost</td>
             </tr>
             <tr>
               <td style="padding: 1.5rem;"><strong>Tactical Elo (Bisection Method)</strong></td>
               <td style="padding: 1.5rem;" class="elo-val">673 Elo</td>
               <td style="padding: 1.5rem;" class="elo-val" style="color: var(--accent);">1478 Elo</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: hsl(120, 80%, 65%);">+805 Elo Points</td>
+              <td style="padding: 1.5rem; font-weight: bold; color: #15803d;">+805 Elo Points</td>
             </tr>
             <tr>
               <td style="padding: 1.5rem;"><strong>Inference Retries / Logic Loops</strong></td>
