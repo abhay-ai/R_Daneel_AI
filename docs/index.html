@@ -11,25 +11,21 @@
   
   <style>
     :root {
-      --bg: radial-gradient(circle at 50% 50%, hsl(240, 30%, 8%), hsl(240, 45%, 3%));
-      --panel-bg: rgba(255, 255, 255, 0.025);
-      --panel-border: rgba(255, 255, 255, 0.06);
-      --text: hsl(240, 15%, 85%);
-      --text-muted: hsl(240, 10%, 62%);
-      --text-highlight: hsl(0, 0%, 100%);
+      --bg: #ffffff;
+      --panel-bg: #ffffff;
+      --panel-border: #e4e4e7;
+      --text: #27272a;
+      --text-muted: #71717a;
+      --text-highlight: #09090b;
       
-      --accent: hsl(270, 85%, 65%);
-      --accent-glow: hsla(270, 85%, 65%, 0.35);
-      --cyan: hsl(195, 95%, 50%);
-      --cyan-glow: hsla(195, 95%, 50%, 0.3);
-      --indigo: hsl(225, 90%, 65%);
-      --indigo-glow: hsla(225, 90%, 65%, 0.3);
-      --gold: hsl(45, 90%, 55%);
-      --gold-glow: hsla(45, 90%, 55%, 0.3);
-      --red: hsl(0, 85%, 60%);
+      --accent: #4f46e5;
+      --cyan: #0891b2;
+      --indigo: #2563eb;
+      --gold: #d97706;
+      --red: #dc2626;
       
-      --board-light: hsl(240, 20%, 82%);
-      --board-dark: hsl(240, 25%, 38%);
+      --board-light: #f4f4f5;
+      --board-dark: #a1a1aa;
       --square-size: 52px;
       --piece-size: 2.3rem;
       
@@ -57,28 +53,19 @@
       overflow-x: hidden;
     }
 
-    /* Ambient background glows */
+    /* Ambient background glows - hidden for clean solid white theme */
     .glow-orb {
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: var(--accent);
-      filter: blur(180px);
-      opacity: 0.12;
-      pointer-events: none;
-      z-index: 0;
+      display: none;
     }
     .glow-orb-1 { top: 5%; left: -150px; }
-    .glow-orb-2 { bottom: 15%; right: -150px; background: var(--cyan); }
-    .glow-orb-3 { top: 45%; left: 40%; background: var(--indigo); opacity: 0.08; }
+    .glow-orb-2 { bottom: 15%; right: -150px; }
+    .glow-orb-3 { top: 45%; left: 40%; }
 
     /* Navigation Sidebar */
     aside {
       width: var(--sidebar-width);
-      background: rgba(8, 10, 16, 0.75);
+      background: #fafafa;
       border-right: 1px solid var(--panel-border);
-      backdrop-filter: blur(25px);
       position: fixed;
       top: 0;
       bottom: 0;
@@ -103,9 +90,6 @@
       font-weight: 800;
       letter-spacing: -0.05rem;
       color: var(--text-highlight);
-      background: linear-gradient(135deg, #fff 40%, var(--indigo) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
     .nav-links {
@@ -126,7 +110,7 @@
     }
     .nav-links a:hover, .nav-links a.active {
       color: var(--text-highlight);
-      background: var(--panel-bg);
+      background: #f4f4f5;
       border-left: 3px solid var(--indigo);
       padding-left: calc(1.1rem - 3px);
     }
@@ -171,7 +155,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: linear-gradient(90deg, var(--panel-border) 0%, transparent 100%);
+      background: var(--panel-border);
       margin-left: 1rem;
     }
 
@@ -192,13 +176,12 @@
       border: 1px solid var(--panel-border);
       border-radius: 16px;
       padding: 2.5rem;
-      backdrop-filter: blur(20px);
       margin-bottom: 2rem;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      border-color: #d4d4d8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     /* Hero / Ad Section */
@@ -212,9 +195,7 @@
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -0.1rem;
-      background: linear-gradient(135deg, #fff 30%, var(--indigo) 70%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-highlight);
       margin-bottom: 0.5rem;
     }
     .hero-subtitle {
@@ -226,9 +207,9 @@
     }
     .badge {
       display: inline-block;
-      background: rgba(140, 90, 255, 0.1);
-      border: 1px solid rgba(140, 90, 255, 0.3);
-      color: hsl(260, 95%, 75%);
+      background: #e0e7ff;
+      border: 1px solid #c7d2fe;
+      color: #4338ca;
       padding: 0.35rem 0.8rem;
       border-radius: 50px;
       font-size: 0.85rem;
@@ -298,7 +279,7 @@
     }
     .preset-selector select {
       width: 100%;
-      background: rgba(10, 12, 18, 0.9);
+      background: #ffffff;
       border: 1px solid var(--panel-border);
       color: var(--text-highlight);
       font-family: var(--font-sans);
@@ -324,9 +305,9 @@
       display: grid;
       grid-template-columns: repeat(8, var(--square-size));
       grid-template-rows: repeat(8, var(--square-size));
-      border: 8px solid rgba(12, 14, 22, 0.95);
+      border: 8px solid #1f2937;
       border-radius: 12px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       position: relative;
     }
     .square {
@@ -396,7 +377,6 @@
       position: absolute;
       inset: 0;
       border: 3.5px solid var(--red);
-      box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.4);
       z-index: 3;
       pointer-events: none;
       animation: pulse-border 1.5s infinite;
@@ -406,7 +386,6 @@
       position: absolute;
       inset: 0;
       border: 3.5px solid var(--gold);
-      box-shadow: inset 0 0 14px var(--gold-glow);
       z-index: 3;
       pointer-events: none;
     }
@@ -415,7 +394,6 @@
       position: absolute;
       inset: 0;
       border: 3.5px solid var(--cyan);
-      box-shadow: inset 0 0 14px var(--cyan-glow);
       z-index: 3;
       pointer-events: none;
     }
@@ -435,7 +413,8 @@
     .fen-display {
       font-family: var(--font-mono);
       font-size: 0.8rem;
-      background: rgba(8, 10, 16, 0.7);
+      background: #f4f4f5;
+      color: var(--text-highlight);
       padding: 0.65rem 4.5rem 0.65rem 0.9rem;
       border-radius: 8px;
       border: 1px solid var(--panel-border);
@@ -447,7 +426,7 @@
     .fen-copy-btn {
       position: absolute;
       right: 8px;
-      background: rgba(255, 255, 255, 0.05);
+      background: #ffffff;
       border: 1px solid var(--panel-border);
       border-radius: 4px;
       color: var(--text-muted);
@@ -459,7 +438,7 @@
       z-index: 5;
     }
     .fen-copy-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: #f4f4f5;
       color: var(--text-highlight);
     }
 
@@ -467,7 +446,7 @@
     .dashboard-panel {
       border: 1px solid var(--panel-border);
       border-radius: 14px;
-      background: rgba(8, 10, 16, 0.5);
+      background: #ffffff;
       overflow: hidden;
       min-height: 480px;
       display: flex;
@@ -475,7 +454,7 @@
     }
     .dash-header {
       display: flex;
-      background: rgba(8, 10, 16, 0.85);
+      background: #f4f4f5;
       border-bottom: 1px solid var(--panel-border);
     }
     .dash-btn {
@@ -495,7 +474,7 @@
     }
     .dash-btn.active {
       color: var(--indigo);
-      background: rgba(255, 255, 255, 0.02);
+      background: #ffffff;
     }
     .dash-btn.active::after {
       content: '';
@@ -521,7 +500,7 @@
       font-family: var(--font-mono);
       font-size: 0.85rem;
       line-height: 1.6;
-      color: hsl(240, 15%, 88%);
+      color: var(--text);
       overflow-x: auto;
       white-space: pre-wrap;
     }
@@ -546,14 +525,14 @@
     .utility-metric {
       display: inline-block;
       font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.04);
+      background: #f4f4f5;
       border: 1px solid var(--panel-border);
       border-radius: 4px;
       padding: 0.15rem 0.4rem;
       font-weight: bold;
     }
-    .utility-metric.positive { color: hsl(120, 80%, 65%); }
-    .utility-metric.negative { color: hsl(0, 85%, 65%); }
+    .utility-metric.positive { color: #16a34a; }
+    .utility-metric.negative { color: #dc2626; }
     .utility-metric.neutral { color: var(--text-muted); }
 
     /* Architecture Flow Chart */
@@ -562,9 +541,8 @@
       flex-direction: column;
       gap: 1.5rem;
       margin-top: 1rem;
-    }
-    .flow-node {
-      background: rgba(255, 255, 255, 0.015);
+       .flow-node {
+      background: #fafafa;
       border: 1px solid var(--panel-border);
       border-radius: 10px;
       padding: 1.5rem;
@@ -595,10 +573,9 @@
       font-weight: 800;
       font-size: 0.9rem;
       color: #fff;
-      box-shadow: 0 0 10px var(--indigo-glow);
     }
-    .flow-num.cyan { background: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
-    .flow-num.gold { background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+    .flow-num.cyan { background: var(--cyan); }
+    .flow-num.gold { background: var(--gold); }
     
     .flow-info h4 {
       font-size: 1.1rem;
@@ -610,7 +587,7 @@
       margin-bottom: 0;
       line-height: 1.5;
     }
-
+ 
     /* Comparison Table */
     table {
       width: 100%;
@@ -625,24 +602,24 @@
     th {
       font-weight: 700;
       color: var(--text-highlight);
-      background: rgba(255, 255, 255, 0.02);
+      background: #f4f4f5;
       text-transform: uppercase;
       font-size: 0.8rem;
       letter-spacing: 0.05rem;
     }
     tr:hover td {
-      background: rgba(255, 255, 255, 0.005);
+      background: #fafafa;
     }
     td.elo-val {
       font-family: var(--font-mono);
       font-weight: bold;
       color: var(--cyan);
     }
-
+ 
     /* CTA / Advertisement Section */
     .cta-card {
-      background: linear-gradient(135deg, rgba(8, 10, 16, 0.85) 0%, rgba(140, 90, 255, 0.08) 100%);
-      border: 1px solid rgba(140, 90, 255, 0.2);
+      background: #f4f4f5;
+      border: 1px solid var(--panel-border);
       border-radius: 16px;
       padding: 3rem;
       text-align: center;
@@ -669,12 +646,9 @@
       border-radius: 8px;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px var(--indigo-glow);
     }
     .cta-btn:hover {
-      background: hsl(225, 95%, 70%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(140, 90, 255, 0.4);
+      background: #1d4ed8;
     }
 
     /* Responsive Design */
@@ -732,9 +706,7 @@
       .hero-title {
         font-size: 2.6rem;
       }
-    }
-
-    /* Flow comparison diagrams styling */
+      /* Flow comparison diagrams styling */
     .comparison-diagrams {
       display: flex;
       flex-direction: column;
@@ -749,33 +721,30 @@
       padding: 1.2rem 1.5rem;
       gap: 1rem;
       transition: all 0.3s ease;
-      backdrop-filter: blur(8px);
     }
     .flow-row.traditional {
-      background: rgba(239, 68, 68, 0.02);
-      border: 1px solid rgba(239, 68, 68, 0.08);
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
     }
     .flow-row.traditional:hover {
-      background: rgba(239, 68, 68, 0.04);
-      border-color: rgba(239, 68, 68, 0.15);
+      background: #fde8e8;
+      border-color: #fca5a5;
     }
     .flow-row.mimicry {
-      background: rgba(245, 158, 11, 0.02);
-      border: 1px solid rgba(245, 158, 11, 0.08);
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
     }
     .flow-row.mimicry:hover {
-      background: rgba(245, 158, 11, 0.04);
-      border-color: rgba(245, 158, 11, 0.15);
+      background: #fef3c7;
+      border-color: #fcd34d;
     }
     .flow-row.ours {
-      background: rgba(6, 182, 212, 0.03);
-      border: 1px solid rgba(6, 182, 212, 0.15);
-      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.02);
+      background: #ecfeff;
+      border: 1px solid #cffafe;
     }
     .flow-row.ours:hover {
-      background: rgba(6, 182, 212, 0.05);
-      border-color: rgba(6, 182, 212, 0.3);
-      box-shadow: 0 4px 30px rgba(6, 182, 212, 0.06);
+      background: #cffafe;
+      border-color: #67e8f9;
     }
     .flow-label {
       min-width: 200px;
@@ -788,7 +757,7 @@
       flex-wrap: wrap;
     }
     .flow-step-node {
-      background: rgba(255, 255, 255, 0.03);
+      background: #ffffff;
       border: 1px solid var(--panel-border);
       border-radius: 8px;
       padding: 0.5rem 0.9rem;
@@ -801,25 +770,24 @@
       font-weight: bold;
     }
     .flow-row.traditional .flow-step-node.end-node {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #fca5a5;
+      background: #ef4444;
+      border-color: #dc2626;
+      color: #ffffff;
     }
     .flow-row.mimicry .flow-step-node.end-node {
-      background: rgba(245, 158, 11, 0.1);
-      border-color: rgba(245, 158, 11, 0.25);
-      color: #fde047;
+      background: #f59e0b;
+      border-color: #d97706;
+      color: #ffffff;
     }
     .flow-row.ours .flow-step-node.end-node {
-      background: rgba(6, 182, 212, 0.2);
-      border-color: rgba(6, 182, 212, 0.45);
-      color: var(--text-highlight);
-      text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+      background: #0891b2;
+      border-color: #0d9488;
+      color: #ffffff;
     }
     .flow-row.ours .flow-step-node.active-node {
-      border-color: rgba(6, 182, 212, 0.25);
-      color: var(--text-highlight);
-      background: rgba(6, 182, 212, 0.06);
+      border-color: #0891b2;
+      color: #09090b;
+      background: #ffffff;
     }
     .flow-arrow {
       color: var(--text-muted);
@@ -828,9 +796,8 @@
       user-select: none;
     }
     .flow-row.ours .flow-arrow {
-      color: var(--cyan);
+      color: #0891b2;
     }
-
     @media (max-width: 800px) {
       .flow-row {
         flex-direction: column;
@@ -845,10 +812,6 @@
 </head>
 <body>
   
-  <div class="glow-orb glow-orb-1"></div>
-  <div class="glow-orb glow-orb-2"></div>
-  <div class="glow-orb glow-orb-3"></div>
-
   <!-- Navigation Sidebar -->
   <aside>
     <div class="brand">
@@ -857,7 +820,6 @@
     </div>
     <ul class="nav-links">
       <li><a href="#overview" class="active">Overview</a></li>
-      <li><a href="#features">Key Features</a></li>
       <li><a href="#architecture">Architecture</a></li>
       <li><a href="#playground">Interactive Play</a></li>
       <li><a href="#benchmark">Elo Benchmark</a></li>
@@ -881,41 +843,41 @@
       </p>
       
       <div class="glass-card" style="margin-top: 1rem;">
-        <p style="font-size: 1.2rem; color: var(--text-highlight); font-weight: 600; line-height: 1.6; background: linear-gradient(135deg, #fff 50%, var(--indigo) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.2rem;">
+        <p style="font-size: 1.2rem; color: var(--text-highlight); font-weight: 600; line-height: 1.6; margin-bottom: 1.2rem;">
           "Our goal is not to control the LLM, but to show direction when it is confused."
         </p>
         <div class="comparison-diagrams">
           <!-- Row 1: Traditional -->
           <div class="flow-row traditional">
             <div class="flow-label">
-              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #fca5a5; display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Traditional Engines</span>
+              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Traditional Engines</span>
               <strong style="color: var(--text-highlight); font-size: 1.05rem;">Stockfish / Lc0</strong>
             </div>
             <div class="flow-steps">
-              <div class="flow-step-node">Board FEN</div>
+              <div class="flow-step-node">Opponent's Move</div>
               <span class="flow-arrow">➔</span>
               <div class="flow-step-node">Brute-force Tree Search</div>
               <span class="flow-arrow">➔</span>
               <div class="flow-step-node">Numeric Evaluation</div>
               <span class="flow-arrow">➔</span>
-              <div class="flow-step-node end-node">Silent Move</div>
+              <div class="flow-step-node end-node">Bot's Move</div>
             </div>
           </div>
 
           <!-- Row 2: Mimicry -->
           <div class="flow-row mimicry">
             <div class="flow-label">
-              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #fde047; display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Mimicry Engines</span>
+              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Mimicry Engines</span>
               <strong style="color: var(--text-highlight); font-size: 1.05rem;">Maia Chess</strong>
             </div>
             <div class="flow-steps">
-              <div class="flow-step-node">Board FEN</div>
+              <div class="flow-step-node">Opponent's Move</div>
               <span class="flow-arrow">➔</span>
               <div class="flow-step-node">Deep Policy Network</div>
               <span class="flow-arrow">➔</span>
-              <div class="flow-step-node">Human Move Prediction</div>
+              <div class="flow-step-node">Move Prediction</div>
               <span class="flow-arrow">➔</span>
-              <div class="flow-step-node end-node">Predicted Move</div>
+              <div class="flow-step-node end-node">Bot's Move</div>
             </div>
           </div>
 
@@ -923,10 +885,10 @@
           <div class="flow-row ours">
             <div class="flow-label">
               <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--cyan); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Our Neuro-Symbolic Bot</span>
-              <strong style="color: var(--cyan); font-size: 1.05rem; text-shadow: 0 0 10px var(--cyan-glow);">R_Daneel_AI</strong>
+              <strong style="color: var(--cyan); font-size: 1.05rem;">R_Daneel_AI</strong>
             </div>
             <div class="flow-steps">
-              <div class="flow-step-node">Board FEN</div>
+              <div class="flow-step-node">Opponent's Move</div>
               <span class="flow-arrow">➔</span>
               <div class="flow-step-node active-node"><a href="https://abhay-ai.github.io/Queen/" style="color: inherit; text-decoration: none;">Queen</a> (Logical Eyes)</div>
               <span class="flow-arrow">➔</span>
@@ -934,41 +896,9 @@
               <span class="flow-arrow">➔</span>
               <div class="flow-step-node active-node">Virtual Simulations</div>
               <span class="flow-arrow">➔</span>
-              <div class="flow-step-node end-node">Explained Move</div>
+              <div class="flow-step-node end-node">Bot's Move</div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Key Features Section -->
-    <section id="features">
-      <h2>How it Differs from Traditional Engines</h2>
-      <p>Instead of calculating millions of numerical evaluations, R_Daneel_AI plays chess using human-like cognitive processes:</p>
-      
-      <div class="features-grid">
-        <div class="feature-card">
-          <span class="feature-icon">🗣️</span>
-          <h3>Natural Language Explanations</h3>
-          <p>The bot writes down its entire thinking process in standard English. It explains its move choice based on strategic principles ("developing minor pieces," "controlling the center") rather than raw numeric evaluation scores.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🤝</span>
-          <h3>Human-Like Moves</h3>
-          <p>Unlike Stockfish (which plays alien lines) or Maia (which mimics human move probabilities as a black box without logical rules), R_Daneel_AI's play stems from verbal strategic alignment and explicit tactical constraints, making its moves natural and explainable.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🛡️</span>
-          <h3>Resilience under Pressure</h3>
-          <p>When facing checkmate or a lost position, rather than giving up or making random blunders, the bot simulates King escape routes and Stalemate traps to maintain active resistance.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">⚖️</span>
-          <h3>Tension Preservation</h3>
-          <p>Computers often capture immediately because they calculate no material loss. Humans know that maintaining tension is key to forcing concessions. R_Daneel_AI penalizes premature captures, preferring quiet developing moves that keep the pressure on.</p>
         </div>
       </div>
     </section>
