@@ -1,0 +1,6 @@
+berserk
+chess
+openai
+pyswip
+mcp
+python-dotenv

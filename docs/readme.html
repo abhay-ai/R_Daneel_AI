@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R_Daneel_AI 🤖 | Developer Setup Guide</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: radial-gradient(circle at 50% 50%, hsl(220, 25%, 10%), hsl(220, 35%, 4%));
+      --panel-bg: rgba(255, 255, 255, 0.03);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: hsl(220, 15%, 85%);
+      --text-muted: hsl(220, 10%, 60%);
+      --text-highlight: hsl(0, 0%, 100%);
+      
+      --accent: hsl(225, 90%, 65%);
+      --accent-glow: hsla(225, 90%, 65%, 0.3);
+      --cyan: hsl(190, 90%, 50%);
+      --cyan-glow: hsla(190, 90%, 50%, 0.3);
+      --gold: hsl(45, 90%, 55%);
+      --gold-glow: hsla(45, 90%, 55%, 0.3);
+      --red: hsl(0, 85%, 60%);
+      
+      --font-sans: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --sidebar-width: 290px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glows */
+    .glow-orb {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: var(--accent);
+      filter: blur(160px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-orb-1 { top: 15%; left: -100px; }
+    .glow-orb-2 { bottom: 15%; right: -100px; background: var(--cyan); }
+
+    /* Navigation Sidebar */
+    aside {
+      width: var(--sidebar-width);
+      background: rgba(10, 12, 18, 0.75);
+      border-right: 1px solid var(--panel-border);
+      backdrop-filter: blur(20px);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand span {
+      font-size: 1.8rem;
+    }
+    .brand h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.05rem;
+      color: var(--text-highlight);
+      background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.75rem 1.1rem;
+      border-radius: 8px;
+      display: block;
+      transition: all 0.3s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-highlight);
+      background: var(--panel-bg);
+      border-left: 3px solid var(--accent);
+      padding-left: calc(1.1rem - 3px);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--panel-border);
+      padding-top: 1.5rem;
+    }
+    .nav-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Main Content Area */
+    main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 3.5rem 4.5rem;
+      max-width: 1200px;
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      margin-bottom: 5.5rem;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-highlight);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--panel-border) 0%, transparent 100%);
+      margin-left: 1rem;
+    }
+
+    h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-highlight);
+      margin: 2.2rem 0 1rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    ol, ul {
+      margin-left: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    strong {
+      color: var(--text-highlight);
+    }
+
+    /* Card / Glass Container */
+    .glass-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      backdrop-filter: blur(16px);
+      margin-bottom: 2rem;
+    }
+
+    /* Code Block Containers with Copy Button */
+    .code-block-container {
+      position: relative;
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      background: rgba(10, 12, 18, 0.55);
+      padding: 1.5rem;
+      margin: 1.2rem 0 2rem;
+    }
+    .code-block-container.env-file {
+      border-left: 4px solid var(--cyan);
+    }
+    .code-block-container.sh-file {
+      border-left: 4px solid var(--accent);
+    }
+    .code-label {
+      position: absolute;
+      top: -0.75rem;
+      left: 1rem;
+      background: hsl(220, 30%, 15%);
+      border: 1px solid var(--panel-border);
+      padding: 0.15rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: hsl(220, 15%, 88%);
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      border-radius: 5px;
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 5;
+    }
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-highlight);
+    }
+
+    /* Warning/Alert boxes */
+    .alert-box {
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+    .alert-box.info {
+      background: rgba(0, 190, 255, 0.04);
+      border: 1px solid rgba(0, 190, 255, 0.15);
+      color: var(--text);
+    }
+    .alert-box.warning {
+      background: rgba(255, 170, 0, 0.04);
+      border: 1px solid rgba(255, 170, 0, 0.15);
+      color: var(--text);
+    }
+    .alert-box.danger {
+      background: rgba(255, 0, 0, 0.04);
+      border: 1px solid rgba(255, 0, 0, 0.15);
+      color: var(--text);
+    }
+    .alert-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .alert-title {
+      font-weight: 700;
+      color: var(--text-highlight);
+      margin-bottom: 0.35rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1000px) {
+      body {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--panel-border);
+        padding: 1.5rem 2rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .nav-links {
+        flex-direction: row;
+        gap: 1rem;
+      }
+      .nav-footer {
+        display: none;
+      }
+      main {
+        margin-left: 0;
+        padding: 2.5rem 2rem;
+      }
+    }
+
+    @media (max-width: 650px) {
+      aside {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      main {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- Navigation Sidebar -->
+  <aside>
+    <div class="brand">
+      <span>🤖</span>
+      <h1>R_Daneel_AI</h1>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#quickstart" class="active">Quickstart</a></li>
+      <li><a href="#install-queen">1. Install Queen</a></li>
+      <li><a href="#vllm-server">2. Boot vLLM Server</a></li>
+      <li><a href="#env-config">3. Configure .env</a></li>
+      <li><a href="#run-bot">4. Run the Bot</a></li>
+      <li><a href="#benchmarks">5. Run Benchmarks</a></li>
+      <li><a href="#visualizer">6. Autopsy Replays</a></li>
+      <li><a href="#troubleshoot">Troubleshooting</a></li>
+    </ul>
+    
+    <div class="nav-footer">
+      <p>Developer Setup Guide.</p>
+      <p>Back to <a href="index.html">Advertisement Page →</a></p>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    
+    <!-- Quickstart Overview -->
+    <section id="quickstart">
+      <h2>Developer Setup Guide</h2>
+      <p>
+        Welcome to the installation and deployment documentation for <strong>R_Daneel_AI</strong>. This guide walks you through setting up your local environment, installing the symbolic Prolog engine, spinning up the high-capacity vLLM inference backend, configuring credentials, and running the benchmarking suite.
+      </p>
+      
+      <div class="alert-box info">
+        <span class="alert-icon">💡</span>
+        <div>
+          <div class="alert-title">Hardware Requirements</div>
+          To run the flaghip <strong>Gemma 4 26B AWQ MoE</strong> model locally, we recommend a GPU with at least <strong>24 GB of VRAM</strong> (such as an Nvidia RTX 3090, 4090, or A5000). The model footprint consumes ~16.6 GiB of memory, leaving the remainder for KV cache allocation.
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Install Queen -->
+    <section id="install-queen">
+      <h2>1. Install <a href="https://abhay-ai.github.io/Queen/">Queen</a></h2>
+      <p>
+        The bot relies on the standalone <strong><a href="https://abhay-ai.github.io/Queen/">Queen</a></strong> package (the compiled SWI-Prolog chess engine wrapper) to calculate legal moves, pinned pieces, checks, discoverys, and forced tactical wins.
+      </p>
+      <p>First, ensure you have <strong>SWI-Prolog</strong> installed on your system:</p>
+      
+      <div class="code-block-container sh-file">
+        <span class="code-label">Fedora / RedHat</span>
+        <button class="copy-btn" onclick="copyCode('sh-dnf')">Copy</button>
+        <pre id="sh-dnf">sudo dnf install pl</pre>
+      </div>
+
+      <div class="code-block-container sh-file">
+        <span class="code-label">Ubuntu / Debian</span>
+        <button class="copy-btn" onclick="copyCode('sh-apt')">Copy</button>
+        <pre id="sh-apt">sudo apt-get install swi-prolog</pre>
+      </div>
+
+      <p>Next, install the local python dependencies and install the cloned `Queen` package in editable mode:</p>
+
+      <div class="code-block-container sh-file">
+        <span class="code-label">Shell Command</span>
+        <button class="copy-btn" onclick="copyCode('sh-install')">Copy</button>
+        <pre id="sh-install">pip install -r requirements.txt
+pip install -e ./Queen</pre>
+      </div>
+    </section>
+
+    <!-- 2. Boot vLLM Inference Server -->
+    <section id="vllm-server">
+      <h2>2. Boot the local vLLM Server</h2>
+      <p>
+        To avoid high inference latency, we serve the model locally using <strong>vLLM</strong>. Because Gemma 4 is a large Mixture of Experts (MoE) model, we apply structural parameter limits to prevent GPU out-of-memory errors:
+      </p>
+      <ul>
+        <li><code>--max-model-len 8192</code>: Clamps the maximum context window to fit the GPU VRAM.</li>
+        <li><code>--max-num-batched-tokens 4096</code>: Sets appropriate multimodal batched limits.</li>
+        <li><code>--enable-auto-tool-choice --tool-call-parser gemma4</code>: Enables native tool calling.</li>
+      </ul>
+
+      <p>Launch the server by executing the provided startup script:</p>
+
+      <div class="code-block-container sh-file">
+        <span class="code-label">start_vllm.sh</span>
+        <button class="copy-btn" onclick="copyCode('sh-vllm')">Copy</button>
+        <pre id="sh-vllm">#!/bin/bash
+export VLLM_DISABLE_FLASHINFER=1
+export VLLM_USE_FLASHINFER_SAMPLER=0
+export VLLM_ATTENTION_BACKEND=FLASH_ATTN
+export HF_HUB_OFFLINE=1
+
+# Serve Gemma 4 MoE on port 8000 with optimized parameters
+vllm serve cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit \
+    --port 8000 \
+    --enable-auto-tool-choice \
+    --tool-call-parser gemma4 \
+    --max-num-batched-tokens 4096 \
+    --max-model-len 8192</pre>
+      </div>
+    </section>
+
+    <!-- 3. Configure .env Credentials -->
+    <section id="env-config">
+      <h2>3. Configure Environment Variables</h2>
+      <p>
+        Create a <code>.env</code> file at the root of the project to hold your private credentials and configuration parameters. The file is listed in <code>.gitignore</code> to prevent accidental commits to public repositories.
+      </p>
+
+      <div class="code-block-container env-file">
+        <span class="code-label">.env File Structure</span>
+        <button class="copy-btn" onclick="copyCode('env-payload')">Copy</button>
+        <pre id="env-payload"># Lichess Connection Credentials
+LICHESS_API_TOKEN=your_lichess_bot_api_token_here
+LICHESS_MY_USERNAME=your_personal_username_to_accept_challenges_from
+
+# Local vLLM Model serving configuration
+LICHESS_MODEL_NAME=cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit</pre>
+      </div>
+    </section>
+
+    <!-- 4. Run the Bot -->
+    <section id="run-bot">
+      <h2>4. Run the Lichess Bot</h2>
+      <p>
+        Once the vLLM server is running and your <code>.env</code> file is configured, start the Lichess polling client:
+      </p>
+
+      <div class="code-block-container sh-file">
+        <span class="code-label">Shell Command</span>
+        <button class="copy-btn" onclick="copyCode('sh-bot')">Copy</button>
+        <pre id="sh-bot">python3 lichess_bot.py</pre>
+      </div>
+      <p>
+        The client will connect, upgrade your account to a Lichess BOT designation (if not done already), and sit in a listening state. Challenges issued from your designated <code>LICHESS_MY_USERNAME</code> will be automatically accepted, starting a match.
+      </p>
+    </section>
+
+    <!-- 5. Run Benchmark Suites -->
+    <section id="run-benchmarks">
+      <h2>5. Run Benchmark Suites</h2>
+      <p>
+        You can test the bot's tactical accuracy and rating locally using the test utilities:
+      </p>
+
+      <h3>A. Local Tactical vision Elo Benchmark</h3>
+      <p>Measures accuracy and computes an estimated tactical rating against 30 puzzles:</p>
+      <div class="code-block-container sh-file">
+        <span class="code-label">Shell Command</span>
+        <button class="copy-btn" onclick="copyCode('sh-puzzle')">Copy</button>
+        <pre id="sh-puzzle">python3 test_puzzles.py</pre>
+      </div>
+
+      <h3>B. Pure LLM Baseline Comparison</h3>
+      <p>Evaluates a pure LLM (without <a href="https://abhay-ai.github.io/Queen/">Queen</a> or min-max constraints) to measure System 2 improvements:</p>
+      <div class="code-block-container sh-file">
+        <span class="code-label">Shell Command</span>
+        <button class="copy-btn" onclick="copyCode('sh-baseline')">Copy</button>
+        <pre id="sh-baseline">python3 test_puzzles_baseline.py</pre>
+      </div>
+
+      <h3>C. Match Play Against Local Stockfish</h3>
+      <p>Auto-runs standard matches (alternating colors) against a local Stockfish engine to determine win rate:</p>
+      <div class="code-block-container sh-file">
+        <span class="code-label">Shell Command</span>
+        <button class="copy-btn" onclick="copyCode('sh-stockfish')">Copy</button>
+        <pre id="sh-stockfish">python3 play_stockfish.py</pre>
+      </div>
+    </section>
+
+    <!-- 6. Autopsy Visualizer -->
+    <section id="visualizer">
+      <h2>6. Replaying Games & Analyzing Thought Logs</h2>
+      <p>
+        R_Daneel_AI records every turn's FEN state, proposed moves, metrics, and full Markdown thoughts in structured JSON Lines files (<code>logs/game_{game_id}.jsonl</code>).
+      </p>
+      <p>To inspect and debug the bot's System 2 logical reasoning step-by-step:</p>
+      <ol>
+        <li>Open [logs/visualizer.html](file:///home/abhay/Projects/R_Daneel_AI/logs/visualizer.html) in any browser.</li>
+        <li>Drag and drop your game's <code>.jsonl</code> file directly into the visualizer panel.</li>
+        <li>Use the navigation controls (Play/Pause, Next, Previous) to replay the board state and read the corresponding LLM Thoughts and updated Strategic Plans.</li>
+      </ol>
+    </section>
+
+    <!-- Troubleshooting Section -->
+    <section id="troubleshoot">
+      <h2>Troubleshooting Common Errors</h2>
+      
+      <div class="alert-box danger">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <div class="alert-title">SWI-Prolog Shared Library Error (pyswip)</div>
+          <p>
+            <strong>Error</strong>: <code>Failed to find shared library 'libswipl.so'</code>.
+          </p>
+          <p>
+            <strong>Solution</strong>: You must explicitly register the location of SWI-Prolog's binary libraries inside your environment variables before executing. Find the path containing <code>libswipl.so</code> (usually under <code>/usr/lib/swi-prolog/lib/x86_64-linux/</code> or <code>/usr/lib64/</code>) and export it:
+          </p>
+          <div class="code-block-container sh-file" style="margin-bottom: 0;">
+            <span class="code-label">Environment Export</span>
+            <button class="copy-btn" onclick="copyCode('sh-lib')">Copy</button>
+            <pre id="sh-lib">export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/x86_64-linux:$LD_LIBRARY_PATH</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-box warning">
+        <span class="alert-icon">🦖</span>
+        <div>
+          <div class="alert-title">Model Context Window Overflow (400 BadRequest)</div>
+          <p>
+            <strong>Error</strong>: <code>BadRequestError: 400 Context window exceeded limit</code>.
+          </p>
+          <p>
+            <strong>Solution</strong>: In complex games with deep tool calls, the chat history can swell. The python coordinator automatically trims the `get_tactical_summary` dictionary keys and uses history block pruning. If you encounter errors, ensure the server was booted with <code>--max-model-len 8192</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="alert-box info">
+        <span class="alert-icon">🌀</span>
+        <div>
+          <div class="alert-title">AWQ Token Repetition Loops</div>
+          <p>
+            <strong>Problem</strong>: AWQ-quantized Mixture of Experts models running at <code>temperature=0.0</code> sometimes enter infinite token repetition loops, failing to emit JSON tool calls.
+          </p>
+          <p>
+            <strong>Solution</strong>: We resolved this in <code>lichess_bot.py</code> by setting <code>temperature=0.15</code> and <code>frequency_penalty=0.15</code>. Ensure these settings are active in your script.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function copyCode(preId) {
+      const code = document.getElementById(preId).textContent;
+      navigator.clipboard.writeText(code);
+      const btn = event.target;
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+    }
+
+    // Scroll Spy for sidebar links
+    window.addEventListener("scroll", () => {
+      const sections = document.querySelectorAll("section");
+      const navLinks = document.querySelectorAll(".nav-links a");
+      
+      let current = "";
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - 120) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach(a => {
+        a.classList.remove("active");
+        if (a.getAttribute("href") === `#${current}`) {
+          a.classList.add("active");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

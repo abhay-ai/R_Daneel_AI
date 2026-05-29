@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R_Daneel_AI 🤖 | Neuro-Symbolic Chess Bot & Benchmark</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: radial-gradient(circle at 50% 50%, hsl(240, 30%, 8%), hsl(240, 45%, 3%));
+      --panel-bg: rgba(255, 255, 255, 0.025);
+      --panel-border: rgba(255, 255, 255, 0.06);
+      --text: hsl(240, 15%, 85%);
+      --text-muted: hsl(240, 10%, 62%);
+      --text-highlight: hsl(0, 0%, 100%);
+      
+      --accent: hsl(270, 85%, 65%);
+      --accent-glow: hsla(270, 85%, 65%, 0.35);
+      --cyan: hsl(195, 95%, 50%);
+      --cyan-glow: hsla(195, 95%, 50%, 0.3);
+      --indigo: hsl(225, 90%, 65%);
+      --indigo-glow: hsla(225, 90%, 65%, 0.3);
+      --gold: hsl(45, 90%, 55%);
+      --gold-glow: hsla(45, 90%, 55%, 0.3);
+      --red: hsl(0, 85%, 60%);
+      
+      --board-light: hsl(240, 20%, 82%);
+      --board-dark: hsl(240, 25%, 38%);
+      --square-size: 52px;
+      --piece-size: 2.3rem;
+      
+      --font-sans: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --sidebar-width: 290px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glows */
+    .glow-orb {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: var(--accent);
+      filter: blur(180px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-orb-1 { top: 5%; left: -150px; }
+    .glow-orb-2 { bottom: 15%; right: -150px; background: var(--cyan); }
+    .glow-orb-3 { top: 45%; left: 40%; background: var(--indigo); opacity: 0.08; }
+
+    /* Navigation Sidebar */
+    aside {
+      width: var(--sidebar-width);
+      background: rgba(8, 10, 16, 0.75);
+      border-right: 1px solid var(--panel-border);
+      backdrop-filter: blur(25px);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding: 2.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand span {
+      font-size: 1.8rem;
+    }
+    .brand h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.05rem;
+      color: var(--text-highlight);
+      background: linear-gradient(135deg, #fff 40%, var(--indigo) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.8rem 1.1rem;
+      border-radius: 8px;
+      display: block;
+      transition: all 0.3s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-highlight);
+      background: var(--panel-bg);
+      border-left: 3px solid var(--indigo);
+      padding-left: calc(1.1rem - 3px);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--panel-border);
+      padding-top: 1.5rem;
+    }
+    .nav-footer a {
+      color: var(--indigo);
+      text-decoration: none;
+    }
+
+    /* Main Content Area */
+    main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 3.5rem 4.5rem;
+      max-width: 1250px;
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      margin-bottom: 5.5rem;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-highlight);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--panel-border) 0%, transparent 100%);
+      margin-left: 1rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    strong {
+      color: var(--text-highlight);
+    }
+
+    /* Card / Glass Container */
+    .glass-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      margin-bottom: 2rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Hero / Ad Section */
+    .hero-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.1rem;
+      background: linear-gradient(135deg, #fff 30%, var(--indigo) 70%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.5;
+      max-width: 800px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(140, 90, 255, 0.1);
+      border: 1px solid rgba(140, 90, 255, 0.3);
+      color: hsl(260, 95%, 75%);
+      padding: 0.35rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      width: max-content;
+      text-transform: uppercase;
+      letter-spacing: 0.05rem;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .feature-card {
+      padding: 2.2rem;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+      border-color: var(--indigo);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-highlight);
+      margin-bottom: 0.75rem;
+    }
+    .feature-card p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    /* Interactive Chess Playground Layout */
+    .playground-container {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .preset-selector {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    .preset-selector label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .preset-selector select {
+      width: 100%;
+      background: rgba(10, 12, 18, 0.9);
+      border: 1px solid var(--panel-border);
+      color: var(--text-highlight);
+      font-family: var(--font-sans);
+      font-size: 1.05rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    .preset-selector select:focus {
+      border-color: var(--indigo);
+    }
+
+    /* Interactive Chessboard */
+    .chessboard-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
+    .chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, var(--square-size));
+      grid-template-rows: repeat(8, var(--square-size));
+      border: 8px solid rgba(12, 14, 22, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .square {
+      width: var(--square-size);
+      height: var(--square-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      user-select: none;
+      transition: all 0.25s ease;
+    }
+    .square.light {
+      background-color: var(--board-light);
+    }
+    .square.dark {
+      background-color: var(--board-dark);
+    }
+    
+    .piece {
+      font-size: var(--piece-size);
+      line-height: 1;
+      cursor: default;
+      z-index: 2;
+      transition: transform 0.2s ease;
+    }
+    .piece.white-piece {
+      color: #ffffff;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.55));
+    }
+    .piece.black-piece {
+      color: #12141c;
+      filter: drop-shadow(0 1px 2px rgba(255,255,255,0.2));
+    }
+    .square:hover .piece {
+      transform: scale(1.15);
+    }
+
+    /* Coordinate Labels */
+    .label-rank {
+      position: absolute;
+      top: 3px;
+      left: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      opacity: 0.45;
+      z-index: 1;
+    }
+    .square.light .label-rank { color: hsl(240, 20%, 30%); }
+    .square.dark .label-rank { color: hsl(240, 15%, 85%); }
+
+    .label-file {
+      position: absolute;
+      bottom: 3px;
+      right: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      opacity: 0.45;
+      z-index: 1;
+    }
+    .square.light .label-file { color: hsl(240, 20%, 30%); }
+    .square.dark .label-file { color: hsl(240, 15%, 85%); }
+
+    /* Visual highlights on chessboard */
+    .square.highlight-check::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 3.5px solid var(--red);
+      box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.4);
+      z-index: 3;
+      pointer-events: none;
+      animation: pulse-border 1.5s infinite;
+    }
+    .square.highlight-tactical::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 3.5px solid var(--gold);
+      box-shadow: inset 0 0 14px var(--gold-glow);
+      z-index: 3;
+      pointer-events: none;
+    }
+    .square.highlight-move::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 3.5px solid var(--cyan);
+      box-shadow: inset 0 0 14px var(--cyan-glow);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    @keyframes pulse-border {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
+    .fen-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .fen-display {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      background: rgba(8, 10, 16, 0.7);
+      padding: 0.65rem 4.5rem 0.65rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--panel-border);
+      width: 100%;
+      text-align: left;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .fen-copy-btn {
+      position: absolute;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 5;
+    }
+    .fen-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-highlight);
+    }
+
+    /* Analysis Dashboard Tabs */
+    .dashboard-panel {
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      background: rgba(8, 10, 16, 0.5);
+      overflow: hidden;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+    .dash-header {
+      display: flex;
+      background: rgba(8, 10, 16, 0.85);
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .dash-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 1.1rem 1.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .dash-btn:hover {
+      color: var(--text-highlight);
+    }
+    .dash-btn.active {
+      color: var(--indigo);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .dash-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--indigo);
+    }
+
+    .dash-content {
+      padding: 1.8rem;
+      flex: 1;
+      display: none;
+      position: relative;
+    }
+    .dash-content.active {
+      display: block;
+    }
+
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: hsl(240, 15%, 88%);
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .thoughts-container {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .thoughts-container h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-highlight);
+    }
+    .thoughts-container blockquote {
+      border-left: 3px solid var(--indigo);
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .utility-metric {
+      display: inline-block;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+      padding: 0.15rem 0.4rem;
+      font-weight: bold;
+    }
+    .utility-metric.positive { color: hsl(120, 80%, 65%); }
+    .utility-metric.negative { color: hsl(0, 85%, 65%); }
+    .utility-metric.neutral { color: var(--text-muted); }
+
+    /* Architecture Flow Chart */
+    .arch-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .flow-node {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+    }
+    .flow-node::after {
+      content: '↓';
+      position: absolute;
+      bottom: -1.75rem;
+      left: 50px;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+    }
+    .flow-node:last-child::after {
+      display: none;
+    }
+    .flow-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #fff;
+      box-shadow: 0 0 10px var(--indigo-glow);
+    }
+    .flow-num.cyan { background: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
+    .flow-num.gold { background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+    
+    .flow-info h4 {
+      font-size: 1.1rem;
+      color: var(--text-highlight);
+      margin-bottom: 0.35rem;
+    }
+    .flow-info p {
+      font-size: 0.95rem;
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+
+    /* Comparison Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    th, td {
+      padding: 1.1rem 1.4rem;
+      text-align: left;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    th {
+      font-weight: 700;
+      color: var(--text-highlight);
+      background: rgba(255, 255, 255, 0.02);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05rem;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.005);
+    }
+    td.elo-val {
+      font-family: var(--font-mono);
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    /* CTA / Advertisement Section */
+    .cta-card {
+      background: linear-gradient(135deg, rgba(8, 10, 16, 0.85) 0%, rgba(140, 90, 255, 0.08) 100%);
+      border: 1px solid rgba(140, 90, 255, 0.2);
+      border-radius: 16px;
+      padding: 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-card h3 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-highlight);
+      margin-bottom: 1rem;
+      letter-spacing: -0.05rem;
+    }
+    .cta-card p {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--indigo);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px var(--indigo-glow);
+    }
+    .cta-btn:hover {
+      background: hsl(225, 95%, 70%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(140, 90, 255, 0.4);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1100px) {
+      body {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--panel-border);
+        padding: 1.5rem 2rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .nav-links {
+        flex-direction: row;
+        gap: 1rem;
+      }
+      .nav-footer {
+        display: none;
+      }
+      main {
+        margin-left: 0;
+        padding: 2.5rem 2rem;
+      }
+      .playground-container {
+        grid-template-columns: 1fr;
+      }
+      .chessboard-wrapper {
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    @media (max-width: 650px) {
+      :root {
+        --square-size: 42px;
+        --piece-size: 1.9rem;
+      }
+      aside {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      main {
+        padding: 1.5rem 1rem;
+      }
+      .hero-title {
+        font-size: 2.6rem;
+      }
+    }
+
+    /* Flow comparison diagrams styling */
+    .comparison-diagrams {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      gap: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+    .flow-row.traditional {
+      background: rgba(239, 68, 68, 0.02);
+      border: 1px solid rgba(239, 68, 68, 0.08);
+    }
+    .flow-row.traditional:hover {
+      background: rgba(239, 68, 68, 0.04);
+      border-color: rgba(239, 68, 68, 0.15);
+    }
+    .flow-row.mimicry {
+      background: rgba(245, 158, 11, 0.02);
+      border: 1px solid rgba(245, 158, 11, 0.08);
+    }
+    .flow-row.mimicry:hover {
+      background: rgba(245, 158, 11, 0.04);
+      border-color: rgba(245, 158, 11, 0.15);
+    }
+    .flow-row.ours {
+      background: rgba(6, 182, 212, 0.03);
+      border: 1px solid rgba(6, 182, 212, 0.15);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.02);
+    }
+    .flow-row.ours:hover {
+      background: rgba(6, 182, 212, 0.05);
+      border-color: rgba(6, 182, 212, 0.3);
+      box-shadow: 0 4px 30px rgba(6, 182, 212, 0.06);
+    }
+    .flow-label {
+      min-width: 200px;
+    }
+    .flow-steps {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+    .flow-step-node {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .flow-step-node.end-node {
+      font-weight: bold;
+    }
+    .flow-row.traditional .flow-step-node.end-node {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+    }
+    .flow-row.mimicry .flow-step-node.end-node {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #fde047;
+    }
+    .flow-row.ours .flow-step-node.end-node {
+      background: rgba(6, 182, 212, 0.2);
+      border-color: rgba(6, 182, 212, 0.45);
+      color: var(--text-highlight);
+      text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+    }
+    .flow-row.ours .flow-step-node.active-node {
+      border-color: rgba(6, 182, 212, 0.25);
+      color: var(--text-highlight);
+      background: rgba(6, 182, 212, 0.06);
+    }
+    .flow-arrow {
+      color: var(--text-muted);
+      font-weight: bold;
+      font-size: 0.85rem;
+      user-select: none;
+    }
+    .flow-row.ours .flow-arrow {
+      color: var(--cyan);
+    }
+
+    @media (max-width: 800px) {
+      .flow-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .flow-label {
+        min-width: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <!-- Navigation Sidebar -->
+  <aside>
+    <div class="brand">
+      <span>🤖</span>
+      <h1>R_Daneel_AI</h1>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#overview" class="active">Overview</a></li>
+      <li><a href="#features">Key Features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#playground">Interactive Play</a></li>
+      <li><a href="#benchmark">Elo Benchmark</a></li>
+    </ul>
+    
+    <div class="nav-footer">
+      <p>Documentation built locally.</p>
+      <p>Read the <a href="readme.html">Setup Guide →</a></p>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    
+    <!-- Hero / Overview Section -->
+    <section id="overview" class="hero-container">
+      <div class="badge">Dual-Process Cognitive Architecture</div>
+      <h2 class="hero-title">R_Daneel_AI</h2>
+      <p class="hero-subtitle">
+        A chess bot that uses a Large Language Model to strategize, with <a href="https://abhay-ai.github.io/Queen/">Queen</a> acting as its sensory eyes. By pairing verbal planning with logical constraint validation, it plays chess through reasoning rather than brute-force calculation.
+      </p>
+      
+      <div class="glass-card" style="margin-top: 1rem;">
+        <p style="font-size: 1.2rem; color: var(--text-highlight); font-weight: 600; line-height: 1.6; background: linear-gradient(135deg, #fff 50%, var(--indigo) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.2rem;">
+          "Our goal is not to control the LLM, but to show direction when it is confused."
+        </p>
+        <div class="comparison-diagrams">
+          <!-- Row 1: Traditional -->
+          <div class="flow-row traditional">
+            <div class="flow-label">
+              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #fca5a5; display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Traditional Engines</span>
+              <strong style="color: var(--text-highlight); font-size: 1.05rem;">Stockfish / Lc0</strong>
+            </div>
+            <div class="flow-steps">
+              <div class="flow-step-node">Board FEN</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node">Brute-force Tree Search</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node">Numeric Evaluation</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node end-node">Silent Move</div>
+            </div>
+          </div>
+
+          <!-- Row 2: Mimicry -->
+          <div class="flow-row mimicry">
+            <div class="flow-label">
+              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #fde047; display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Mimicry Engines</span>
+              <strong style="color: var(--text-highlight); font-size: 1.05rem;">Maia Chess</strong>
+            </div>
+            <div class="flow-steps">
+              <div class="flow-step-node">Board FEN</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node">Deep Policy Network</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node">Human Move Prediction</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node end-node">Predicted Move</div>
+            </div>
+          </div>
+
+          <!-- Row 3: Ours -->
+          <div class="flow-row ours">
+            <div class="flow-label">
+              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--cyan); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Our Neuro-Symbolic Bot</span>
+              <strong style="color: var(--cyan); font-size: 1.05rem; text-shadow: 0 0 10px var(--cyan-glow);">R_Daneel_AI</strong>
+            </div>
+            <div class="flow-steps">
+              <div class="flow-step-node">Board FEN</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node active-node"><a href="https://abhay-ai.github.io/Queen/" style="color: inherit; text-decoration: none;">Queen</a> (Logical Eyes)</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node active-node">LLM (Verbal Strategist)</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node active-node">Virtual Simulations</div>
+              <span class="flow-arrow">➔</span>
+              <div class="flow-step-node end-node">Explained Move</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section id="features">
+      <h2>How it Differs from Traditional Engines</h2>
+      <p>Instead of calculating millions of numerical evaluations, R_Daneel_AI plays chess using human-like cognitive processes:</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🗣️</span>
+          <h3>Natural Language Explanations</h3>
+          <p>The bot writes down its entire thinking process in standard English. It explains its move choice based on strategic principles ("developing minor pieces," "controlling the center") rather than raw numeric evaluation scores.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">🤝</span>
+          <h3>Human-Like Moves</h3>
+          <p>Unlike Stockfish (which plays alien lines) or Maia (which mimics human move probabilities as a black box without logical rules), R_Daneel_AI's play stems from verbal strategic alignment and explicit tactical constraints, making its moves natural and explainable.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">🛡️</span>
+          <h3>Resilience under Pressure</h3>
+          <p>When facing checkmate or a lost position, rather than giving up or making random blunders, the bot simulates King escape routes and Stalemate traps to maintain active resistance.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">⚖️</span>
+          <h3>Tension Preservation</h3>
+          <p>Computers often capture immediately because they calculate no material loss. Humans know that maintaining tension is key to forcing concessions. R_Daneel_AI penalizes premature captures, preferring quiet developing moves that keep the pressure on.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture">
+      <h2>System Architecture & Data Flow</h2>
+      <p>R_Daneel_AI maintains a clean separation of concerns, coupling a local neural inference server to a logical rulebase:</p>
+      
+      <div class="glass-card">
+        <div class="arch-flow">
+          <div class="flow-node">
+            <div class="flow-num">1</div>
+            <div class="flow-info">
+              <h4>Lichess API & Event Stream</h4>
+              <p>The python bot accepts private challenges from your main account and listens to the active match state in real-time via the <code>berserk</code> client.</p>
+            </div>
+          </div>
+          
+          <div class="flow-node">
+            <div class="flow-num cyan">2</div>
+            <div class="flow-info">
+              <h4>Prolog Pre-Analysis (<a href="https://abhay-ai.github.io/Queen/">Queen</a>)</h4>
+              <p>The bot parses the board FEN into Prolog variables and queries the <a href="https://abhay-ai.github.io/Queen/">Queen</a> package to retrieve all active pins, attacks, weak squares, passed pawns, and forced combinations.</p>
+            </div>
+          </div>
+
+          <div class="flow-node">
+            <div class="flow-num gold">3</div>
+            <div class="flow-info">
+              <h4>Local vLLM MoE Server</h4>
+              <p>An optimized local vLLM instance serving <code>Gemma-4-26B-AWQ</code> receives the prompt. Utilizing native tool-calling (<code>--tool-call-parser gemma4</code>), the model executes virtual simulations to check opponent counter-threats.</p>
+            </div>
+          </div>
+
+          <div class="flow-node">
+            <div class="flow-num">4</div>
+            <div class="flow-info">
+              <h4>Enforcement Guardrails & Move Submission</h4>
+              <p>The python framework checks if the LLM's proposed move was simulated during the turn. If not, it rejects it and forces simulation. Once verified, the legal move is published straight to Lichess.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Playground Section -->
+    <section id="playground">
+      <h2>Interactive Autopsy Playground</h2>
+      <p>Select a scenario below to watch the bot execute System 2 logical analysis on the chessboard and review the actual metrics, strategy tags, and thoughts generated in real-time:</p>
+      
+      <div class="glass-card playground-container">
+        
+        <!-- Left Side: Board and selector -->
+        <div class="chessboard-wrapper">
+          <div class="preset-selector">
+            <label for="scenario-select">Tactical Scenario</label>
+            <select id="scenario-select" onchange="loadPreset(this.value)">
+              <option value="defeatism">Escaping Defeatism (Avoiding Mate-in-1)</option>
+              <option value="tension">Maintaining Tension (Equal Italian Game)</option>
+              <option value="staircase">Mate-in-Two (Staircase Rooks)</option>
+              <option value="fork">Knight Fork (Fork on King & Queen)</option>
+            </select>
+          </div>
+          
+          <div id="chessboard" class="chessboard"></div>
+          
+          <div class="fen-container">
+            <div id="fen-display" class="fen-display"></div>
+            <button class="fen-copy-btn" onclick="copyFen()">Copy FEN</button>
+          </div>
+        </div>
+
+        <!-- Right Side: Dashboard Tabs -->
+        <div class="dashboard-panel">
+          <div class="dash-header">
+            <button id="tab-thoughts" class="dash-btn active" onclick="switchTab(event, 'dash-thoughts')">LLM Thoughts</button>
+            <button id="tab-strategy" class="dash-btn" onclick="switchTab(event, 'dash-strategy')">Active Strategy</button>
+            <button id="tab-metrics" class="dash-btn" onclick="switchTab(event, 'dash-metrics')">Move Metrics</button>
+          </div>
+          
+          <!-- Thoughts Tab -->
+          <div id="dash-thoughts" class="dash-content active">
+            <div class="thoughts-container" id="thoughts-box">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+          
+          <!-- Strategy Tab -->
+          <div id="dash-strategy" class="dash-content">
+            <div class="thoughts-container" id="strategy-box">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+          
+          <!-- Metrics Tab -->
+          <div id="dash-metrics" class="dash-content">
+            <pre id="metrics-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Benchmark Section -->
+    <section id="benchmark">
+      <h2>Tactical Elo Benchmarks</h2>
+      <p style="font-size: 1.15rem; line-height: 1.7; margin-bottom: 2rem;">
+        To evaluate the performance of our approach, we ran a comprehensive, large-scale benchmark across <strong>500 Lichess chess puzzles</strong> ranging from 600 to 1500 Elo. Both configurations utilize the local model <strong><code>cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit</code></strong> served via vLLM. We compared the pure LLM baseline (given legal moves but no tools) against R_Daneel_AI (LLM + <a href="https://abhay-ai.github.io/Queen/">Queen</a>):
+      </p>
+      
+      <!-- Big Highlights Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+        <div class="glass-card" style="padding: 1.8rem; text-align: center; border-color: rgba(0, 220, 255, 0.15); margin-bottom: 0;">
+          <span style="display: block; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05rem; margin-bottom: 0.5rem;">Tactical ELO Gain</span>
+          <span style="font-size: 3rem; font-weight: 800; color: var(--cyan); text-shadow: 0 0 15px var(--cyan-glow); line-height: 1;">+805</span>
+          <span style="display: block; font-size: 0.95rem; color: var(--text-highlight); margin-top: 0.5rem;">Elo Rating Increase</span>
+        </div>
+        
+        <div class="glass-card" style="padding: 1.8rem; text-align: center; border-color: rgba(140, 90, 255, 0.15); margin-bottom: 0;">
+          <span style="display: block; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05rem; margin-bottom: 0.5rem;">R_Daneel_AI Solved Rate</span>
+          <span style="font-size: 3rem; font-weight: 800; color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); line-height: 1;">80.8%</span>
+          <span style="display: block; font-size: 0.95rem; color: var(--text-highlight); margin-top: 0.5rem;">404 / 500 Puzzles Solved</span>
+        </div>
+
+        <div class="glass-card" style="padding: 1.8rem; text-align: center; border-color: rgba(255, 255, 255, 0.08); margin-bottom: 0;">
+          <span style="display: block; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05rem; margin-bottom: 0.5rem;">Baseline Solved Rate</span>
+          <span style="font-size: 3rem; font-weight: 800; color: var(--text-muted); line-height: 1;">16.0%</span>
+          <span style="display: block; font-size: 0.95rem; color: var(--text-muted); margin-top: 0.5rem;">80 / 500 Puzzles Solved</span>
+        </div>
+      </div>
+      
+      <div class="glass-card" style="padding: 0; overflow-x: auto;">
+        <table style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="padding: 1.5rem;">Evaluation Metric (500-Puzzle Benchmark)</th>
+              <th style="padding: 1.5rem;">Pure LLM Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B</span></th>
+              <th style="padding: 1.5rem;">R_Daneel_AI (Ours)<br><span style="font-size: 0.75rem; color: var(--indigo); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B + Queen</span></th>
+              <th style="padding: 1.5rem;">Improvement Delta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 1.5rem;"><strong>Puzzles Solved</strong></td>
+              <td style="padding: 1.5rem;">80 / 500</td>
+              <td style="padding: 1.5rem;"><strong>404 / 500</strong></td>
+              <td style="padding: 1.5rem; color: hsl(120, 80%, 65%); font-weight: bold;">+324 puzzles solved</td>
+            </tr>
+            <tr>
+              <td style="padding: 1.5rem;"><strong>Accuracy / Pass Rate</strong></td>
+              <td style="padding: 1.5rem;">16.0%</td>
+              <td style="padding: 1.5rem;"><strong>80.8%</strong></td>
+              <td style="padding: 1.5rem; color: hsl(120, 80%, 65%); font-weight: bold;">+64.8% accuracy boost</td>
+            </tr>
+            <tr>
+              <td style="padding: 1.5rem;"><strong>Tactical Elo (Bisection Method)</strong></td>
+              <td style="padding: 1.5rem;" class="elo-val">673 Elo</td>
+              <td style="padding: 1.5rem;" class="elo-val" style="color: var(--accent);">1478 Elo</td>
+              <td style="padding: 1.5rem; font-weight: bold; color: hsl(120, 80%, 65%);">+805 Elo Points</td>
+            </tr>
+            <tr>
+              <td style="padding: 1.5rem;"><strong>Inference Retries / Logic Loops</strong></td>
+              <td style="padding: 1.5rem;">High (6+ retries)</td>
+              <td style="padding: 1.5rem;"><strong>0.18 avg retries</strong></td>
+              <td style="padding: 1.5rem;">Resolved loop deadlocks</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section>
+      <div class="cta-card">
+        <h3>Ready to Configure R_Daneel_AI?</h3>
+        <p>Follow our comprehensive interactive setup guide to spin up the local vLLM server, hook in your Lichess bot account credentials, and run the benchmark suite.</p>
+        <a href="readme.html" class="cta-btn">View Setup Documentation</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Presets database for the playground
+    const presets = {
+      defeatism: {
+        fen: "8/5kp1/p7/1p5p/PP5P/8/r6r/2K5 w - - 1 46",
+        highlight: { check: [], move: ["c1b1"], tactical: ["a2a1", "h2h1"] },
+        board: [
+          { sq: "a2", pc: "r", col: "black" },
+          { sq: "h2", pc: "r", col: "black" },
+          { sq: "c1", pc: "k", col: "white" },
+          { sq: "f7", pc: "k", col: "black" },
+          { sq: "g7", pc: "p", col: "black" },
+          { sq: "a6", pc: "p", col: "black" },
+          { sq: "b5", pc: "p", col: "black" },
+          { sq: "h5", pc: "p", col: "black" },
+          { sq: "a4", pc: "p", col: "white" },
+          { sq: "h4", pc: "p", col: "white" }
+        ],
+        thoughts: "<h4>Defeatism Escape Thoughts</h4><p>My King on <code>c1</code> is in grave danger. Black's Rooks on <code>a2</code> and <code>h2</code> are extremely active on the second rank. If I play a pawn move like <code>a4b5</code>, Black will immediately play <code>a2a1#</code> or <code>h2h1#</code> delivering checkmate. Both of these are fatal checkmate threats.</p><blockquote>Proposing a move that allows immediate checkmate when another legal move escapes it is the ultimate blunder!</blockquote><p>I must simulate all available King moves. If I play <code>c1d1</code>, it still allows <code>a2a1#</code>. However, moving to <code>c1b1</code> is the ONLY move that escapes immediate checkmate, since the King blocks the <code>a2</code> Rook's path down the 1st rank. I will choose this move to defend actively and prolong the game.</p>",
+        strategy: "<h4>Strategic Directives</h4><p>Seek drawing chances or stalemate tricks in this lost position. Avoid easy simplifications that benefit the side up material. Keep the King on the most resilient escape squares.</p>",
+        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"proposed_move\": \"c1b1 (Kg1)\",\n  \"retries\": 1,\n  \"material_difference\": -11,\n  \"legal_escape_squares\": [\"b1\", \"d1\"],\n  \"simulation_outcome\": \"Checkmate evaded. Opponent has no immediate mate-in-one.\"\n}"
+      },
+      tension: {
+        fen: "r1bqk2r/ppp2ppp/2np1n2/2b1p3/4P3/2N1BN2/PPP2PPP/R2QKB1R w KQkq - 2 6",
+        highlight: { check: [], move: ["f1d3"], tactical: ["e3", "c5"] },
+        board: [
+          { sq: "a8", pc: "r", col: "black" },
+          { sq: "c8", pc: "b", col: "black" },
+          { sq: "d8", pc: "q", col: "black" },
+          { sq: "e8", pc: "k", col: "black" },
+          { sq: "h8", pc: "r", col: "black" },
+          { sq: "c6", pc: "n", col: "black" },
+          { sq: "f6", pc: "n", col: "black" },
+          { sq: "c5", pc: "b", col: "black" },
+          { sq: "a7", pc: "p", col: "black" },
+          { sq: "b7", pc: "p", col: "black" },
+          { sq: "c7", pc: "p", col: "black" },
+          { sq: "d6", pc: "p", col: "black" },
+          { sq: "e5", pc: "p", col: "black" },
+          { sq: "f7", pc: "p", col: "black" },
+          { sq: "g7", pc: "p", col: "black" },
+          { sq: "h7", pc: "p", col: "black" },
+          { sq: "a1", pc: "r", col: "white" },
+          { sq: "c3", pc: "n", col: "white" },
+          { sq: "e3", pc: "b", col: "white" },
+          { sq: "f3", pc: "n", col: "white" },
+          { sq: "d1", pc: "q", col: "white" },
+          { sq: "e1", pc: "k", col: "white" },
+          { sq: "f1", pc: "b", col: "white" },
+          { sq: "a2", pc: "p", col: "white" },
+          { sq: "b2", pc: "p", col: "white" },
+          { sq: "c2", pc: "p", col: "white" },
+          { sq: "d2", pc: "p", col: "white" },
+          { sq: "e4", pc: "p", col: "white" },
+          { sq: "f2", pc: "p", col: "white" },
+          { sq: "g2", pc: "p", col: "white" },
+          { sq: "h2", pc: "p", col: "white" }
+        ],
+        thoughts: "<h4>Tension Analysis Thoughts</h4><p>We are in a standard opening position. There is active mutual piece tension between my Bishop on <code>e3</code> and Black's Bishop on <code>c5</code>.</p><p>If I play the capture <code>e3c5</code>, Black will play <code>d6xc5</code> recapturing. This is a neutral exchange (Net Utility = 0). According to the rules, a capture that resolves active board tension for a net utility of 0 receives a <span class='utility-metric negative'>-0.5</span> tension resolution penalty. It is a strategic blunder because it resolves tension on the opponent's terms.</p><p>Instead, I will play the quiet developing move <code>f1d3</code> (bringing the light-squared bishop out and preparing to castle). This move has a Net Utility of <span class='utility-metric neutral'>0.0</span>, but it maintains the tension and improves my overall development.</p>",
+        strategy: "<h4>Strategic Directives</h4><p>Complete the development of minor pieces, control the center, and maintain board tension rather than resolving it prematurely through captures.</p>",
+        metrics: "{\n  \"game_phase\": \"opening\",\n  \"board_tension\": {\n    \"mutual_piece_tension\": [\"bishop at e3 and bishop at c5\"]\n  },\n  \"candidate_utilities\": {\n    \"e3c5\": -0.5,\n    \"d1d4\": -5.0,\n    \"f1d3\": 0.0\n  },\n  \"selected_move\": \"f1d3\"\n}"
+      },
+      staircase: {
+        fen: "k7/8/8/8/8/7R/7R/K7 w - - 0 1",
+        highlight: { check: [], move: ["h3b3"], tactical: ["b7", "b8"] },
+        board: [
+          { sq: "a8", pc: "k", col: "black" },
+          { sq: "h3", pc: "r", col: "white" },
+          { sq: "h2", pc: "r", col: "white" },
+          { sq: "a1", pc: "k", col: "white" }
+        ],
+        thoughts: "<h4>Forced Mate-in-Two Calculation</h4><p>The opponent King is trapped on the back rank at <code>a8</code>. I have two Rooks on the h-file.</p><p>My <a href=\"https://abhay-ai.github.io/Queen/\">Queen</a> detects a forced mate-in-two: <code>mate_in_two: ['h3b3', 'h2b2']</code>. I must play one of these forced mate sequences immediately.</p><p>If I play <code>h3b3</code> (moving the Rook to the b-file), it cuts off the b-file. Black's only legal response is to move the King to <code>a7</code>. Then, on my next move, the Rook on <code>h2</code> will play <code>h2h8#</code> delivering checkmate. This staircase pattern is completely forced.</p>",
+        strategy: "<h4>Strategic Directives</h4><p>Prioritize forced checkmate combinations immediately. Cut off the escape squares of the black king using coordinates calculated by <a href=\"https://abhay-ai.github.io/Queen/\">Queen</a>.</p>",
+        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"mate_in_two_moves\": [\"h3b3\", \"h2b2\"],\n  \"selected_move\": \"h3b3\",\n  \"net_utility\": \"+Infinity\"\n}"
+      },
+      fork: {
+        fen: "k3q3/8/8/3N4/8/8/4P3/4K3 w - - 0 1",
+        highlight: { check: [], move: ["d5c7"], tactical: ["a8", "e8"] },
+        board: [
+          { sq: "a8", pc: "k", col: "black" },
+          { sq: "e8", pc: "q", col: "black" },
+          { sq: "d5", pc: "n", col: "white" },
+          { sq: "e2", pc: "p", col: "white" },
+          { sq: "e1", pc: "k", col: "white" }
+        ],
+        thoughts: "<h4>Forced Knight Fork Calculation</h4><p>The Knight is positioned on <code>d5</code>. I notice the Black King is on <code>a8</code> and the Black Queen is on <code>e8</code>.</p><p>The <a href=\"https://abhay-ai.github.io/Queen/\">Queen</a> reports a fork-creating move: <code>forced_material_wins: [{'move': 'd5c7', 'gain': 9}]</code>. The Knight on <code>d5</code> can jump to <code>c7</code> to deliver a check to the King on <code>a8</code> while simultaneously attacking the Queen on <code>e8</code>.</p><p>Since Black is in check, they are forced to move their King. On the next turn, I will capture their Queen for free. This is a massive net utility gain.</p>",
+        strategy: "<h4>Strategic Directives</h4><p>Perform the Knight fork on c7 to win the black queen and transition into a simplified, winning endgame.</p>",
+        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"forced_material_wins\": [\n    {\n      \"move\": \"d5c7\",\n      \"gain\": 9\n    }\n  ],\n  \"selected_move\": \"d5c7\",\n  \"net_utility\": 9\n}"
+      }
+    };
+
+    // Helper to generate coordinates maps
+    const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+    // Map unicode chess characters
+    const unicodePieces = {
+      white: { p: "♙", n: "♘", b: "♗", r: "♖", q: "♕", k: "♔" },
+      black: { p: "♟", n: "♞", b: "♝", r: "♜", q: "♛", k: "♚" }
+    };
+
+    function renderBoard(presetName) {
+      const container = document.getElementById("chessboard");
+      container.innerHTML = "";
+      
+      const preset = presets[presetName];
+      const boardMap = {};
+      preset.board.forEach(item => {
+        boardMap[item.sq] = item;
+      });
+
+      for (let r = 0; r < 8; r++) {
+        for (let f = 0; f < 8; f++) {
+          const sqName = files[f] + ranks[r];
+          const isLight = (r + f) % 2 === 0;
+          
+          const sqEl = document.createElement("div");
+          sqEl.className = `square ${isLight ? 'light' : 'dark'}`;
+          sqEl.id = `sq-${sqName}`;
+
+          // File & Rank labels
+          if (f === 0) {
+            const rLabel = document.createElement("span");
+            rLabel.className = "label-rank";
+            rLabel.textContent = ranks[r];
+            sqEl.appendChild(rLabel);
+          }
+          if (r === 7) {
+            const fLabel = document.createElement("span");
+            fLabel.className = "label-file";
+            fLabel.textContent = files[f];
+            sqEl.appendChild(fLabel);
+          }
+
+          // Highlights
+          if (preset.highlight.check.includes(sqName)) {
+            sqEl.classList.add("highlight-check");
+          }
+          if (preset.highlight.move.includes(sqName)) {
+            sqEl.classList.add("highlight-move");
+          }
+          if (preset.highlight.tactical.includes(sqName)) {
+            sqEl.classList.add("highlight-tactical");
+          }
+
+          // Piece
+          const piece = boardMap[sqName];
+          if (piece) {
+            const pieceEl = document.createElement("span");
+            pieceEl.className = `piece ${piece.col}-piece`;
+            pieceEl.textContent = unicodePieces[piece.col][piece.pc];
+            sqEl.appendChild(pieceEl);
+          }
+
+          container.appendChild(sqEl);
+        }
+      }
+
+      // Populate dashboard
+      document.getElementById("fen-display").textContent = preset.fen;
+      document.getElementById("thoughts-box").innerHTML = preset.thoughts;
+      document.getElementById("strategy-box").innerHTML = preset.strategy;
+      document.getElementById("metrics-pre").textContent = preset.metrics;
+    }
+
+    function loadPreset(val) {
+      renderBoard(val);
+    }
+
+    function switchTab(evt, tabId) {
+      // Deactivate all
+      const contents = document.getElementsByClassName("dash-content");
+      for (let i = 0; i < contents.length; i++) {
+        contents[i].classList.remove("active");
+      }
+      const buttons = document.getElementsByClassName("dash-btn");
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("active");
+      }
+      
+      // Activate target
+      document.getElementById(tabId).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+
+    function copyFen() {
+      const fen = document.getElementById("fen-display").textContent;
+      navigator.clipboard.writeText(fen);
+      const btn = document.querySelector(".fen-copy-btn");
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = "Copy FEN"; }, 1500);
+    }
+
+    // Scroll Spy for sidebar links
+    window.addEventListener("scroll", () => {
+      const sections = document.querySelectorAll("section");
+      const navLinks = document.querySelectorAll(".nav-links a");
+      
+      let current = "";
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - 120) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach(a => {
+        a.classList.remove("active");
+        if (a.getAttribute("href") === `#${current}`) {
+          a.classList.add("active");
+        }
+      });
+    });
+
+    // Initial load
+    window.onload = () => {
+      renderBoard("defeatism");
+    };
+  </script>
+</body>
+</html>
