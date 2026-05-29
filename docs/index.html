@@ -541,7 +541,8 @@
       flex-direction: column;
       gap: 1.5rem;
       margin-top: 1rem;
-       .flow-node {
+    }
+    .arch-flow .flow-node {
       background: #fafafa;
       border: 1px solid var(--panel-border);
       border-radius: 10px;
@@ -551,7 +552,7 @@
       gap: 1.5rem;
       position: relative;
     }
-    .flow-node::after {
+    .arch-flow .flow-node::after {
       content: '↓';
       position: absolute;
       bottom: -1.75rem;
@@ -559,10 +560,10 @@
       font-size: 1.2rem;
       color: var(--text-muted);
     }
-    .flow-node:last-child::after {
+    .arch-flow .flow-node:last-child::after {
       display: none;
     }
-    .flow-num {
+    .arch-flow .flow-num {
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -574,15 +575,15 @@
       font-size: 0.9rem;
       color: #fff;
     }
-    .flow-num.cyan { background: var(--cyan); }
-    .flow-num.gold { background: var(--gold); }
+    .arch-flow .flow-num.cyan { background: var(--cyan); }
+    .arch-flow .flow-num.gold { background: var(--gold); }
     
-    .flow-info h4 {
+    .arch-flow .flow-info h4 {
       font-size: 1.1rem;
       color: var(--text-highlight);
       margin-bottom: 0.35rem;
     }
-    .flow-info p {
+    .arch-flow .flow-info p {
       font-size: 0.95rem;
       margin-bottom: 0;
       line-height: 1.5;
