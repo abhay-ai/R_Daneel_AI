@@ -1106,6 +1106,40 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Benchmark Analysis Key Takeaways -->
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--text-highlight); margin-top: 3.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        📊 Benchmark Analysis & Insights
+      </h3>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+        <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
+          <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--red); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            ⚠️ 1. State Tracking Bottleneck
+          </h4>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 0;">
+            The baseline <code>gemma-4-26B</code> model frequently failed due to spatial token tracking errors. Without external tools, the model repeatedly proposed illegal moves or hallucinated that squares were open when line-of-sight pieces blocked them. This triggered extensive self-correction loops and API retries, eventually causing context timeout failures.
+          </p>
+        </div>
+        
+        <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
+          <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--cyan); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            🛡️ 2. Symbolic Grounding Benefits
+          </h4>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 0;">
+            When integrated with the <a href="https://abhay-ai.github.io/Queen/" target="_blank">Queen</a> MCP Server, the model's average retry count dropped to just 0.18 per puzzle. Because the Prolog engine automatically handles strict relational verification, the LLM no longer wastes processing cycles guessing legal move arrays. Instead, it leverages the filtered insights to focus entirely on high-level tactical pruning.
+          </p>
+        </div>
+        
+        <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
+          <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            ⚡ 3. Efficient MoE Architectures
+          </h4>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 0;">
+            These results show that highly optimized Mixture-of-Experts (MoE) models do not need to scale up their raw parameter sizes to tackle complex logical boundaries. Grounding the system with a dedicated, symbolic logic referee allows the model to perform at a tier typically reserved for significantly larger frontier models.
+          </p>
+        </div>
+      </div>
     </section>
 
     <!-- CTA Section -->
