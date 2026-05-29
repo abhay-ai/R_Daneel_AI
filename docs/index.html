@@ -712,99 +712,153 @@
     .comparison-diagrams {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 2rem;
       margin-top: 2rem;
     }
     .flow-row {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
       border-radius: 12px;
-      padding: 1.2rem 1.5rem;
-      gap: 1rem;
+      padding: 1.5rem;
+      gap: 1.5rem;
       transition: all 0.3s ease;
       background: #ffffff;
       border: 2px solid var(--panel-border);
     }
+    .flow-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1.5px solid var(--panel-border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+    .flow-title-category {
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05rem;
+    }
+    .flow-title-model {
+      font-size: 1.05rem;
+    }
+
+    /* Track coloring */
     .flow-row.traditional {
       background: #fff5f5;
-      border: 2px solid #ef4444;
+      border-color: #ef4444;
     }
     .flow-row.traditional:hover {
       background: #fee2e2;
     }
+    .flow-row.traditional .flow-header {
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+    .flow-row.traditional .flow-title-category {
+      color: #ef4444;
+    }
+    .flow-row.traditional .flow-title-model {
+      color: var(--text-highlight);
+    }
     .flow-row.traditional .flow-step-node {
-      background: #fee2e2;
-      border: 1px solid #fca5a5;
+      border: 2px solid #ef4444;
+      background: #ffffff;
       color: #991b1b;
+      box-shadow: 2px 2px 0px rgba(239, 68, 68, 0.25);
     }
     .flow-row.traditional .flow-step-node.end-node {
       background: #ef4444;
-      border-color: #dc2626;
       color: #ffffff;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
     }
- 
+
     .flow-row.mimicry {
       background: #fffbeb;
-      border: 2px solid #f59e0b;
+      border-color: #f59e0b;
     }
     .flow-row.mimicry:hover {
       background: #fef3c7;
     }
+    .flow-row.mimicry .flow-header {
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+    .flow-row.mimicry .flow-title-category {
+      color: #f59e0b;
+    }
+    .flow-row.mimicry .flow-title-model {
+      color: var(--text-highlight);
+    }
     .flow-row.mimicry .flow-step-node {
-      background: #fef3c7;
-      border: 1px solid #fcd34d;
+      border: 2px solid #f59e0b;
+      background: #ffffff;
       color: #92400e;
+      box-shadow: 2px 2px 0px rgba(245, 158, 11, 0.25);
     }
     .flow-row.mimicry .flow-step-node.end-node {
       background: #f59e0b;
-      border-color: #d97706;
       color: #ffffff;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
     }
- 
+
     .flow-row.ours {
       background: #f0fdfa;
-      border: 2px solid #0891b2;
+      border-color: #0891b2;
     }
     .flow-row.ours:hover {
       background: #ccfbf1;
     }
+    .flow-row.ours .flow-header {
+      border-color: rgba(8, 145, 178, 0.2);
+    }
+    .flow-row.ours .flow-title-category {
+      color: #0891b2;
+    }
+    .flow-row.ours .flow-title-model {
+      color: #0891b2;
+      font-weight: bold;
+    }
     .flow-row.ours .flow-step-node {
-      background: #cffafe;
-      border: 1px solid #67e8f9;
+      border: 2px solid #0891b2;
+      background: #ffffff;
       color: #0e7490;
+      box-shadow: 2px 2px 0px rgba(8, 145, 178, 0.25);
     }
     .flow-row.ours .flow-step-node.end-node {
       background: #0891b2;
-      border-color: #0d9488;
       color: #ffffff;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
     }
- 
-    .flow-label {
-      min-width: 200px;
-    }
+
     .flow-steps {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex: 1;
-      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: space-between;
     }
     .flow-step-node {
+      flex: 1;
+      text-align: center;
       border-radius: 8px;
-      padding: 0.5rem 0.9rem;
-      font-size: 0.88rem;
-      font-weight: 600;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
     }
     .flow-step-node.end-node {
-      font-weight: bold;
+      font-weight: 800;
     }
     .flow-arrow {
       color: var(--text-muted);
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 1.3rem;
       user-select: none;
+      display: inline-block;
+      flex-shrink: 0;
+      padding: 0 0.1rem;
     }
     .flow-row.traditional .flow-arrow {
       color: #ef4444;
@@ -815,14 +869,20 @@
     .flow-row.ours .flow-arrow {
       color: #0891b2;
     }
+
     @media (max-width: 950px) {
-      .flow-row {
+      .flow-steps {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 0.75rem;
       }
-      .flow-label {
-        min-width: unset;
+      .flow-step-node {
+        min-height: 48px;
+      }
+      .flow-arrow {
+        transform: rotate(90deg);
+        margin: 0.25rem 0;
+        align-self: center;
       }
     }
   </style>
@@ -866,9 +926,9 @@
         <div class="comparison-diagrams">
           <!-- Row 1: Traditional -->
           <div class="flow-row traditional">
-            <div class="flow-label">
-              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Traditional Engines</span>
-              <strong style="color: var(--text-highlight); font-size: 1.05rem;">Stockfish / Lc0</strong>
+            <div class="flow-header">
+              <span class="flow-title-category">Traditional Engines</span>
+              <strong class="flow-title-model">Stockfish / Lc0</strong>
             </div>
             <div class="flow-steps">
               <div class="flow-step-node">Opponent's Move</div>
@@ -883,9 +943,9 @@
 
           <!-- Row 2: Mimicry -->
           <div class="flow-row mimicry">
-            <div class="flow-label">
-              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Mimicry Engines</span>
-              <strong style="color: var(--text-highlight); font-size: 1.05rem;">Maia Chess</strong>
+            <div class="flow-header">
+              <span class="flow-title-category">Mimicry Engines</span>
+              <strong class="flow-title-model">Maia Chess</strong>
             </div>
             <div class="flow-steps">
               <div class="flow-step-node">Opponent's Move</div>
@@ -900,9 +960,9 @@
 
           <!-- Row 3: Ours -->
           <div class="flow-row ours">
-            <div class="flow-label">
-              <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--cyan); display: block; margin-bottom: 0.2rem; letter-spacing: 0.05rem;">Our Neuro-Symbolic Bot</span>
-              <strong style="color: var(--cyan); font-size: 1.05rem;">R_Daneel_AI</strong>
+            <div class="flow-header">
+              <span class="flow-title-category">Our Neuro-Symbolic Bot</span>
+              <strong class="flow-title-model">R_Daneel_AI</strong>
             </div>
             <div class="flow-steps">
               <div class="flow-step-node">Opponent's Move</div>
