@@ -361,7 +361,7 @@
       <li><a href="#vllm-server">2. Boot vLLM Server</a></li>
       <li><a href="#env-config">3. Configure .env</a></li>
       <li><a href="#run-bot">4. Run the Bot</a></li>
-      <li><a href="#benchmarks">5. Run Benchmarks</a></li>
+      <li><a href="#run-benchmarks">5. Run Benchmarks</a></li>
       <li><a href="#visualizer">6. Autopsy Replays</a></li>
       <li><a href="#troubleshoot">Troubleshooting</a></li>
     </ul>
@@ -386,7 +386,7 @@
         <span class="alert-icon">💡</span>
         <div>
           <div class="alert-title">Hardware Requirements</div>
-          To run the flaghip <strong>Gemma 4 26B AWQ MoE</strong> model locally, we recommend a GPU with at least <strong>24 GB of VRAM</strong> (such as an Nvidia RTX 3090, 4090, or A5000). The model footprint consumes ~16.6 GiB of memory, leaving the remainder for KV cache allocation.
+          To run the flagship <strong>Gemma 4 26B AWQ MoE</strong> model locally, we recommend a GPU with at least <strong>24 GB of VRAM</strong> (such as an Nvidia RTX 3090, 4090, or A5000). The model footprint consumes ~16.6 GiB of memory, leaving the remainder for KV cache allocation.
         </div>
       </div>
     </section>
@@ -486,8 +486,16 @@ LICHESS_MODEL_NAME=cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit</pre>
         <pre id="sh-bot">python3 lichess_bot.py</pre>
       </div>
       <p>
-        The client will connect, upgrade your account to a Lichess BOT designation (if not done already), and sit in a listening state. Challenges issued from your designated <code>LICHESS_MY_USERNAME</code> will be automatically accepted, starting a match.
+        The client will connect, check if your Lichess account is already designated as a BOT account, and prompt you for confirmation if an upgrade is needed. Challenges issued from your designated <code>LICHESS_MY_USERNAME</code> will be automatically accepted, starting a match.
       </p>
+      
+      <div class="alert-box danger" style="margin-top: 1rem;">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <div class="alert-title">Irreversible Lichess BOT Upgrade</div>
+          Upgrading a Lichess account to a <strong>BOT</strong> designation is <strong>irreversible</strong>. Once upgraded, that account can never play standard human matches and will be restricted to bot/API play. We strongly recommend creating a fresh, dedicated Lichess account for your bot rather than using your personal main account.
+        </div>
+      </div>
     </section>
 
     <!-- 5. Run Benchmark Suites -->
@@ -530,7 +538,7 @@ LICHESS_MODEL_NAME=cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit</pre>
       </p>
       <p>To inspect and debug the bot's System 2 logical reasoning step-by-step:</p>
       <ol>
-        <li>Open [logs/visualizer.html](file:///home/abhay/Projects/R_Daneel_AI/logs/visualizer.html) in any browser.</li>
+        <li>Open <a href="../logs/visualizer.html" target="_blank">logs/visualizer.html</a> in any browser.</li>
         <li>Drag and drop your game's <code>.jsonl</code> file directly into the visualizer panel.</li>
         <li>Use the navigation controls (Play/Pause, Next, Previous) to replay the board state and read the corresponding LLM Thoughts and updated Strategic Plans.</li>
       </ol>

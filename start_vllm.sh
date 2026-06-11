@@ -3,6 +3,7 @@
 export VLLM_DISABLE_FLASHINFER=1
 export VLLM_USE_FLASHINFER_SAMPLER=0
 export VLLM_ATTENTION_BACKEND=FLASH_ATTN
+# Set to 0 or comment out on the first run to allow downloading/caching the model
 export HF_HUB_OFFLINE=1
 vllm serve cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit --port 8000 --enable-auto-tool-choice --tool-call-parser gemma4 --max-num-batched-tokens 4096 --max-model-len 8192
 

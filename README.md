@@ -9,8 +9,8 @@ Welcome to **R_Daneel_AI** (named after Isaac Asimov's robot character *R. Danee
 ## 🌟 Interactive Documentation & Landing Pages
 
 For a premium, interactive viewing experience, open these files in your web browser:
-1. **Landing Page & Feature Overview**: [docs/index.html](file:///home/abhay/Projects/R_Daneel_AI/docs/index.html) - Features an interactive chess playground showing the bot's thoughts, active strategy plans, and decision metrics across scenarios.
-2. **Interactive Developer Setup Guide**: [docs/readme.html](file:///home/abhay/Projects/R_Daneel_AI/docs/readme.html) - Step-by-step setup guide covering environment configuration, local vLLM MoE GPU serving parameters, test runs, and troubleshooting.
+1. **Landing Page & Feature Overview**: [docs/index.html](docs/index.html) - Features an interactive chess playground showing the bot's thoughts, active strategy plans, and decision metrics across scenarios.
+2. **Interactive Developer Setup Guide**: [docs/readme.html](docs/readme.html) - Step-by-step setup guide covering environment configuration, local vLLM MoE GPU serving parameters, test runs, and troubleshooting.
 
 ---
 
@@ -20,7 +20,7 @@ For a premium, interactive viewing experience, open these files in your web brow
 * **Tension-Aware Utility Minimization**: Applies a mathematical `-0.5` penalty to neutral piece exchanges that prematurely resolve board tension, steering the LLM to choose quiet, strategic developing moves instead.
 * **Minimax Evasion (Defeatism Blocker)**: If all moves have negative utility, the bot runs minimax simulations on all King escape routes to find the path that maximizes resistance and prolongs the game.
 * **Stateful Strategic Memory**: Tracks and adapts a long-term strategic plan across turns, dynamically adjusting to the game phase (Opening, Middlegame, Endgame).
-* **Autopsy Replay Dashboard**: Generates comprehensive JSON Lines and CSV logs of the LLM's System 2 thoughts, which can be dragged directly into the interactive [visualizer.html](file:///home/abhay/Projects/R_Daneel_AI/logs/visualizer.html) dashboard.
+* **Autopsy Replay Dashboard**: Generates comprehensive JSON Lines and CSV logs of the LLM's System 2 thoughts, which can be dragged directly into the interactive [visualizer.html](logs/visualizer.html) dashboard.
 
 ---
 
@@ -53,7 +53,7 @@ bash start_vllm.sh
 * **Run Pure LLM Baseline**: `python3 test_puzzles_baseline.py`
 * **Play Stockfish Locally**: `python3 play_stockfish.py`
 
-For detailed setup commands, environment variables, and troubleshooting guides, view the interactive setup page at [docs/readme.html](file:///home/abhay/Projects/R_Daneel_AI/docs/readme.html).
+For detailed setup commands, environment variables, and troubleshooting guides, view the interactive setup page at [docs/readme.html](docs/readme.html).
 
 ---
 

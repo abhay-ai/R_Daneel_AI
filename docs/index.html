@@ -23,6 +23,8 @@
       --indigo: #2563eb;
       --gold: #d97706;
       --red: #dc2626;
+      --cyan-glow: rgba(8, 145, 178, 0.35);
+      --accent-glow: rgba(79, 70, 229, 0.35);
       
       --board-light: #f4f4f5;
       --board-dark: #a1a1aa;
@@ -982,6 +984,7 @@
           </div>
         </div>
       </div>
+    </section>
 
     <!-- Playground Section -->
     <section id="playground">
@@ -1094,7 +1097,7 @@
             <tr>
               <td style="padding: 1.5rem;"><strong>Tactical Elo (Bisection Method)</strong></td>
               <td style="padding: 1.5rem;" class="elo-val">673 Elo</td>
-              <td style="padding: 1.5rem;" class="elo-val" style="color: var(--accent);">1478 Elo</td>
+              <td style="padding: 1.5rem; color: var(--accent);" class="elo-val">1478 Elo</td>
               <td style="padding: 1.5rem; font-weight: bold; color: #15803d;">+805 Elo Points</td>
             </tr>
             <tr>
@@ -1173,7 +1176,7 @@
         ],
         thoughts: "<h4>Defeatism Escape Thoughts</h4><p>My King on <code>c1</code> is in grave danger. Black's Rooks on <code>a2</code> and <code>h2</code> are extremely active on the second rank. If I play a pawn move like <code>a4b5</code>, Black will immediately play <code>a2a1#</code> or <code>h2h1#</code> delivering checkmate. Both of these are fatal checkmate threats.</p><blockquote>Proposing a move that allows immediate checkmate when another legal move escapes it is the ultimate blunder!</blockquote><p>I must simulate all available King moves. If I play <code>c1d1</code>, it still allows <code>a2a1#</code>. However, moving to <code>c1b1</code> is the ONLY move that escapes immediate checkmate, since the King blocks the <code>a2</code> Rook's path down the 1st rank. I will choose this move to defend actively and prolong the game.</p>",
         strategy: "<h4>Strategic Directives</h4><p>Seek drawing chances or stalemate tricks in this lost position. Avoid easy simplifications that benefit the side up material. Keep the King on the most resilient escape squares.</p>",
-        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"proposed_move\": \"c1b1 (Kg1)\",\n  \"retries\": 1,\n  \"material_difference\": -11,\n  \"legal_escape_squares\": [\"b1\", \"d1\"],\n  \"simulation_outcome\": \"Checkmate evaded. Opponent has no immediate mate-in-one.\"\n}"
+        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"proposed_move\": \"c1b1 (Kb1)\",\n  \"retries\": 1,\n  \"material_difference\": -11,\n  \"legal_escape_squares\": [\"b1\", \"d1\"],\n  \"simulation_outcome\": \"Checkmate evaded. Opponent has no immediate mate-in-one.\"\n}"
       },
       tension: {
         fen: "r1bqk2r/ppp2ppp/2np1n2/2b1p3/4P3/2N1BN2/PPP2PPP/R2QKB1R w KQkq - 2 6",
@@ -1226,7 +1229,7 @@
         ],
         thoughts: "<h4>Forced Mate-in-Two Calculation</h4><p>The opponent King is trapped on the back rank at <code>a8</code>. I have two Rooks on the h-file.</p><p>My <a href=\"https://abhay-ai.github.io/Queen/\">Queen</a> detects a forced mate-in-two: <code>mate_in_two: ['h3b3', 'h2b2']</code>. I must play one of these forced mate sequences immediately.</p><p>If I play <code>h3b3</code> (moving the Rook to the b-file), it cuts off the b-file. Black's only legal response is to move the King to <code>a7</code>. Then, on my next move, the Rook on <code>h2</code> will play <code>h2h8#</code> delivering checkmate. This staircase pattern is completely forced.</p>",
         strategy: "<h4>Strategic Directives</h4><p>Prioritize forced checkmate combinations immediately. Cut off the escape squares of the black king using coordinates calculated by <a href=\"https://abhay-ai.github.io/Queen/\">Queen</a>.</p>",
-        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"mate_in_two_moves\": [\"h3b3\", \"h2b2\"],\n  \"selected_move\": \"h3b3\",\n  \"net_utility\": \"+Infinity\"\n}"
+        metrics: "{\n  \"game_phase\": \"endgame\",\n  \"mate_in_two_moves\": [\"h3b3\", \"h2b2\"],\n  \"selected_move\": \"h3b3\",\n  \"net_utility\": 99.0\n}"
       },
       fork: {
         fen: "k3q3/8/8/3N4/8/8/4P3/4K3 w - - 0 1",
@@ -1291,10 +1294,10 @@
           if (preset.highlight.check.includes(sqName)) {
             sqEl.classList.add("highlight-check");
           }
-          if (preset.highlight.move.includes(sqName)) {
+          if (preset.highlight.move.some(m => m === sqName || (m.length === 4 && (m.startsWith(sqName) || m.endsWith(sqName))))) {
             sqEl.classList.add("highlight-move");
           }
-          if (preset.highlight.tactical.includes(sqName)) {
+          if (preset.highlight.tactical.some(t => t === sqName || (t.length === 4 && (t.startsWith(sqName) || t.endsWith(sqName))))) {
             sqEl.classList.add("highlight-tactical");
           }
 

@@ -972,10 +972,30 @@ def main():
     client = berserk.Client(session)
     
     try:
-        client.account.upgrade_to_bot()
-        print("Successfully upgraded Lichess account designation to BOT.")
-    except berserk.exceptions.ResponseError:
-        pass # Already upgraded
+        profile = client.account.get()
+        username = profile.get('username')
+        is_bot = profile.get('title') == 'BOT'
+        
+        if not is_bot:
+            print("\n" + "*" * 80)
+            print("⚠️ WARNING: Your Lichess account is NOT currently designated as a BOT account.")
+            print(f"Account profile: https://lichess.org/@/{username}")
+            print("Upgrading an account to a BOT designation is IRREVERSIBLE on Lichess.")
+            print("Once upgraded, you will only be able to play against bots/AI or accept challenges,")
+            print("and you can NEVER play standard rated games against regular human players on this account.")
+            print("*" * 80 + "\n")
+            
+            response = input(f"Do you want to permanently upgrade '{username}' to a BOT account? (yes/no): ")
+            if response.strip().lower() in ('yes', 'y'):
+                print("Upgrading to BOT...")
+                client.account.upgrade_to_bot()
+                print("Successfully upgraded Lichess account designation to BOT.")
+            else:
+                print("Aborting. Bot initialization halted to prevent account modification.")
+                return
+    except Exception as e:
+        print(f"Warning: Could not fetch account details or check BOT status: {e}")
+        print("Continuing initialization under the assumption that the account is already a BOT...")
  
     print("\n📡 Listening for private challenges from your main account on Lichess...")
     

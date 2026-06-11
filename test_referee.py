@@ -58,7 +58,9 @@ def test_pins_and_threats():
     
     pinned = prolog_referee.get_pinned_pieces(pin_fen)
     print(f"Pinned pieces: {pinned}")
-    assert pinned == ["e2"], f"Expected e2 to be pinned, got {pinned}"
+    assert len(pinned) == 1, f"Expected 1 pinned piece, got {len(pinned)}"
+    assert pinned[0]["piece"] == "pawn", f"Expected pawn, got {pinned[0]['piece']}"
+    assert pinned[0]["square"] == "e2", f"Expected e2, got {pinned[0]['square']}"
     
     threats = prolog_referee.get_threatened_pieces(pin_fen)
     print(f"Threatened friendly pieces: {threats}")
