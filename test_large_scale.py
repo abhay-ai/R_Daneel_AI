@@ -213,7 +213,7 @@ def main():
     print(f"       BENCHMARK COMPLETE - {args.mode.upper()}")
     print("====================================================")
     print(f"Overall Score: {total_passed}/{total_puzzles} ({pass_rate:.1f}% Pass Rate)")
-    print(f"Estimated Tactical Elo: ~{estimated_elo} Elo")
+    print(f"Estimated Puzzle Rating: ~{estimated_elo} Rating")
     print("====================================================")
     
     # Save final report

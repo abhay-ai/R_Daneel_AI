@@ -57,6 +57,14 @@ For detailed setup commands, environment variables, and troubleshooting guides, 
 
 ---
 
+## ⚖️ Division of Responsibility (Prolog vs. LLM)
+
+In this Neuro-Symbolic architecture, responsibilities are cleanly divided between the symbolic Prolog engine (`Queen`) and the neural strategist (`R_Daneel_AI`):
+- **Symbolic Layer (Prolog)**: Automatically handles coordinate verification, validates move legality, detects checks/mates, tracks material status, and computes concrete tactical features (pins, forks, threatened/defended pieces, discovered attacks). It also calculates minimax utility values (e.g., captures, material wins).
+- **Neural Layer (LLM)**: Reasons on top of this structured symbolic data. It decides on high-level strategic directives, maintains stateful memory, and applies heuristic penalties (such as the `-0.5` tension resolution penalty for captures that simplify the position on the opponent's terms). This hybrid design ensures the LLM never calculates raw board geometry but acts as a high-level strategic director.
+
+---
+
 ## ⚖️ License
 
 Distributed under the MIT License. See `LICENSE` for more information.

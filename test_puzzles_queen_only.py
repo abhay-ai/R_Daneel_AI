@@ -85,7 +85,7 @@ def run_queen_only_benchmark():
     else:
         estimated_elo = int(mid)
         
-    print(f"\nEstimated Queen-Only Baseline Tactical Elo (Expected Score Matching): ~{estimated_elo} Elo")
+    print(f"\nEstimated Queen-Only Baseline Puzzle Rating (Expected Score Matching): ~{estimated_elo} Rating")
     
     # Save results to log file
     os.makedirs("logs", exist_ok=True)

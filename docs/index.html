@@ -1045,7 +1045,7 @@
 
     <!-- Benchmark Section -->
     <section id="benchmark">
-      <h2>Tactical Elo Benchmarks</h2>
+      <h2>Puzzle Rating Benchmarks</h2>
       <p style="font-size: 1.15rem; line-height: 1.7; margin-bottom: 2rem;">
         To evaluate the performance of our approach, we ran a comprehensive, large-scale benchmark across <strong>500 Lichess chess puzzles</strong> ranging from 600 to 1500 Elo. Both configurations utilize the local model <strong><code>cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit</code></strong> served via vLLM. We compared the pure LLM baseline (given legal moves but no tools) against R_Daneel_AI (LLM + <a href="https://abhay-ai.github.io/Queen/">Queen</a>):
       </p>
@@ -1053,9 +1053,9 @@
       <!-- Big Highlights Grid -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
         <div class="glass-card" style="padding: 1.8rem; text-align: center; border-color: rgba(0, 220, 255, 0.15); margin-bottom: 0;">
-          <span style="display: block; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05rem; margin-bottom: 0.5rem;">Tactical ELO Gain</span>
+          <span style="display: block; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05rem; margin-bottom: 0.5rem;">Puzzle Rating Gain</span>
           <span style="font-size: 3rem; font-weight: 800; color: var(--cyan); text-shadow: 0 0 15px var(--cyan-glow); line-height: 1;">+805</span>
-          <span style="display: block; font-size: 0.95rem; color: var(--text-highlight); margin-top: 0.5rem;">Elo Rating Increase</span>
+          <span style="display: block; font-size: 0.95rem; color: var(--text-highlight); margin-top: 0.5rem;">Rating Increase</span>
         </div>
         
         <div class="glass-card" style="padding: 1.8rem; text-align: center; border-color: rgba(140, 90, 255, 0.15); margin-bottom: 0;">
@@ -1071,7 +1071,7 @@
         </div>
       </div>
       
-      <div class="glass-card" style="padding: 0; overflow-x: auto;">
+      <div class="glass-card" style="padding: 0; overflow-x: auto; margin-bottom: 2.5rem;">
         <table style="width: 100%;">
           <thead>
             <tr>
@@ -1095,19 +1095,85 @@
               <td style="padding: 1.5rem; color: #15803d; font-weight: bold;">+64.8% accuracy boost</td>
             </tr>
             <tr>
-              <td style="padding: 1.5rem;"><strong>Tactical Elo (Bisection Method)</strong></td>
-              <td style="padding: 1.5rem;" class="elo-val">673 Elo</td>
-              <td style="padding: 1.5rem; color: var(--accent);" class="elo-val">1478 Elo</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: #15803d;">+805 Elo Points</td>
+              <td style="padding: 1.5rem;"><strong>Puzzle Rating (Bisection Method)</strong></td>
+              <td style="padding: 1.5rem;" class="elo-val">673 Rating</td>
+              <td style="padding: 1.5rem; color: var(--accent);" class="elo-val">1478 Rating</td>
+              <td style="padding: 1.5rem; font-weight: bold; color: #15803d;">+805 Rating Points</td>
             </tr>
             <tr>
               <td style="padding: 1.5rem;"><strong>Inference Retries / Logic Loops</strong></td>
-              <td style="padding: 1.5rem;">High (6+ retries)</td>
-              <td style="padding: 1.5rem;"><strong>0.18 avg retries</strong></td>
-              <td style="padding: 1.5rem;">Resolved loop deadlocks</td>
+              <td style="padding: 1.5rem;">0.24 avg retries</td>
+              <td style="padding: 1.5rem;"><strong>0.38 avg retries</strong></td>
+              <td style="padding: 1.5rem;">Safe structured boundaries</td>
+            </tr>
+            <tr>
+              <td style="padding: 1.5rem;"><strong>Average Move Latency</strong></td>
+              <td style="padding: 1.5rem;">17.5s / move</td>
+              <td style="padding: 1.5rem;"><strong>24.3s / move</strong></td>
+              <td style="padding: 1.5rem;">+6.8s (System 2 reasoning overhead)</td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Detailed Statistics Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+        <!-- Division of Responsibility -->
+        <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
+          <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--cyan); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            ⚖️ Division of Responsibility
+          </h4>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Responsibilities are split strictly to avoid spatial hallucinations in coordinates:
+          </p>
+          <ul style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); padding-left: 1.2rem; margin-bottom: 0;">
+            <li style="margin-bottom: 0.4rem;"><strong>Symbolic (Prolog):</strong> Handles strict geometry, move validation, check/mate detection, material counts, and tactical feature calculations (pins, forks, threats, discoveries).</li>
+            <li><strong>Neural (LLM):</strong> Reasons on top of structured tactical summaries, decides high-level strategy directives, maintains stateful turn memory, and applies tension penalties (e.g. -0.5 on neutral trades).</li>
+          </ul>
+        </div>
+
+        <!-- Tier-by-Tier Accuracy -->
+        <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
+          <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            📈 Accuracy Breakdown by Elo Tier
+          </h4>
+          <div style="font-size: 0.9rem; overflow-y: auto; max-height: 200px; padding-right: 0.5rem;">
+            <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+              <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                  <th style="text-align: left; padding: 0.4rem;">Tier</th>
+                  <th style="text-align: right; padding: 0.4rem;">Baseline</th>
+                  <th style="text-align: right; padding: 0.4rem; color: var(--accent);">R_Daneel_AI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">600s</td><td style="text-align: right;">10% (5/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">96% (48/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">700s</td><td style="text-align: right;">16% (8/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">96% (48/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">800s</td><td style="text-align: right;">10% (5/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">98% (49/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">900s</td><td style="text-align: right;">20% (10/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">84% (42/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">1000s</td><td style="text-align: right;">16% (8/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">88% (44/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">1100s</td><td style="text-align: right;">16% (8/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">82% (41/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">1200s</td><td style="text-align: right;">20% (10/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">80% (40/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">1300s</td><td style="text-align: right;">24% (12/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">68% (34/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">1400s</td><td style="text-align: right;">10% (5/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">52% (26/50)</td></tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 0.3rem;">1500s</td><td style="text-align: right;">18% (9/50)</td><td style="text-align: right; color: var(--accent); font-weight: bold;">64% (32/50)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Ablation & Stockfish -->
+        <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
+          <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--indigo); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            🔬 Ablation & Stockfish Matches
+          </h4>
+          <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 0.5rem;">
+            <strong>"Queen-Only" Ablation:</strong> Played highest-utility legal move directly from Queen's sorted list (no LLM strategist). Achieved a <strong>76.7% pass rate (~1366 estimated rating)</strong> with an average latency of <strong>~0.3s per move</strong>. This confirms that Queen does the tactical heavy lifting, while R_Daneel_AI provides high-level strategic reasoning.
+          </p>
+          <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 0;">
+            <strong>Stockfish Matches:</strong> Matches are supported locally via <code>play_stockfish.py</code>. R_Daneel_AI shows strong performance against Stockfish Level 0 (~800-1000 Elo), consistently exploiting tactical forks and discoveries generated by the Prolog engine.
+          </p>
+        </div>
       </div>
 
       <!-- Benchmark Analysis Key Takeaways -->
@@ -1118,10 +1184,10 @@
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
         <div class="glass-card" style="margin-bottom: 0; padding: 2rem;">
           <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--red); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-            ⚠️ 1. State Tracking Bottleneck
+            ⚠️ 1. State Tracking & Hallucinations
           </h4>
           <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 0;">
-            The baseline <code>gemma-4-26B</code> model frequently failed due to spatial token tracking errors. Without external tools, the model repeatedly proposed illegal moves or hallucinated that squares were open when line-of-sight pieces blocked them. This triggered extensive self-correction loops and API retries, eventually causing context timeout failures.
+            Although the baseline <code>gemma-4-26B</code> was explicitly provided with the full list of legal moves in its text prompt, it frequently failed due to spatial tracking errors. The model repeatedly hallucinated board states, proposing moves with formatting errors, or moves not present in the legal move list. This triggered self-correction loop retries that exhausted limits, leading to timeouts.
           </p>
         </div>
         

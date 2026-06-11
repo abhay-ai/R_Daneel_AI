@@ -235,6 +235,39 @@ def test_forced_material_wins():
             break
     assert found_win, f"Expected d5c7 with gain of 9, got {wins}"
 
+def test_promotion_validation():
+    print("\n--- Testing Pawn Promotion Validation ---")
+    # FEN with White pawn on e7 ready to promote on e8 (e8 is empty, Black King on d8)
+    promo_fen = "3k4/4P3/8/8/8/8/8/4K3 w - - 0 1"
+    
+    # 1. e7e8q is legal promotion
+    is_legal, explanation = prolog_referee.check_move_diagnostics(promo_fen, "e7e8q")
+    print(f"e7e8q legal? {is_legal} (Explanation: {explanation})")
+    assert is_legal, "e7e8q should be legal"
+    
+    # 2. e7e8 is illegal promotion (missing suffix)
+    is_legal, explanation = prolog_referee.check_move_diagnostics(promo_fen, "e7e8")
+    print(f"e7e8 legal? {is_legal} (Explanation: {explanation})")
+    assert not is_legal, "e7e8 should be illegal (missing promotion suffix)"
+    assert "must specify a promotion piece" in explanation
+    
+    # 3. e7e8x is illegal promotion (invalid suffix)
+    is_legal, explanation = prolog_referee.check_move_diagnostics(promo_fen, "e7e8x")
+    print(f"e7e8x legal? {is_legal} (Explanation: {explanation})")
+    assert not is_legal, "e7e8x should be illegal (invalid promotion suffix)"
+    assert "Invalid promotion piece specified" in explanation
+
+    # 4. Normal non-promoting move (like e1d2 or e1f2) should not require suffix
+    is_legal, explanation = prolog_referee.check_move_diagnostics(promo_fen, "e1f2")
+    print(f"e1f2 legal? {is_legal} (Explanation: {explanation})")
+    assert is_legal, "e1f2 should be legal"
+    
+    # 5. Non-promoting pawn move should be 4 chars
+    is_legal, explanation = prolog_referee.check_move_diagnostics(promo_fen, "e1f2q")
+    print(f"e1f2q legal? {is_legal} (Explanation: {explanation})")
+    assert not is_legal, "e1f2q should be illegal (5 chars for non-promotion)"
+    assert "Non-promotion moves must be exactly 4 characters" in explanation
+
 if __name__ == "__main__":
     test_starting_position()
     test_checkmate_position()
@@ -249,4 +282,5 @@ if __name__ == "__main__":
     test_mate_in_two()
     test_mate_in_three()
     test_forced_material_wins()
+    test_promotion_validation()
     print("\n✅ All tests passed successfully!")
