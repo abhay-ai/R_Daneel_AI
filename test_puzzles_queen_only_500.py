@@ -8,26 +8,26 @@ import queen as prolog_referee
 from lichess_bot import sort_legal_moves
 from test_large_scale import calculate_expected_score_elo
 
-def run_queen_only_500():
+def run_queen_only_500(args):
     # Load all Lichess puzzles
-    puzzles_file = "logs/lichess_1000_puzzles.json"
+    puzzles_file = args.puzzles_file
     if not os.path.exists(puzzles_file):
-        print(f"Error: {puzzles_file} not found. Run filter_puzzles.py first.")
+        print(f"Error: {puzzles_file} not found. Ensure puzzle file exists.", flush=True)
         sys.exit(1)
         
     with open(puzzles_file, "r") as f:
         all_puzzles = json.load(f)
         
-    # Group puzzles by 100-Elo tiers (600 to 1500)
-    tiers = {r: [] for r in range(600, 1600, 100)}
+    # Group puzzles by 100-Elo tiers
+    tiers = {r: [] for r in range(args.min_rating, args.max_rating, 100)}
     for p in all_puzzles:
         tier = (p["rating"] // 100) * 100
         if tier in tiers:
             tiers[tier].append(p)
             
-    # Sample from each tier using seed 42 (matching test_large_scale.py default)
-    random.seed(42)
-    puzzles_per_tier = 50
+    # Sample from each tier using seed
+    random.seed(args.seed)
+    puzzles_per_tier = args.puzzles_per_tier
     sampled_puzzles = []
     for tier, p_list in sorted(tiers.items()):
         if len(p_list) < puzzles_per_tier:
@@ -39,10 +39,11 @@ def run_queen_only_500():
     # Sort sampled puzzles by rating
     sampled_puzzles.sort(key=lambda x: x["rating"])
     total_puzzles = len(sampled_puzzles)
-    print(f"Sampled {total_puzzles} puzzles (50 per tier, seed=42) for Queen-only baseline.", flush=True)
+    print(f"Sampled {total_puzzles} puzzles ({puzzles_per_tier} per tier, seed={args.seed}) for Queen-only baseline.", flush=True)
     
-    checkpoint_file = "logs/large_scale_checkpoint_queen_only_500.json"
-    report_file = "logs/large_scale_report_queen_only_500.json"
+    suffix = f"_{args.output_suffix}" if args.output_suffix else f"_{total_puzzles}"
+    checkpoint_file = f"logs/large_scale_checkpoint_queen_only{suffix}.json"
+    report_file = f"logs/large_scale_report_queen_only{suffix}.json"
     
     # Check if checkpoint exists
     completed_results = []
@@ -114,7 +115,7 @@ def run_queen_only_500():
     avg_time = sum(r["time"] for r in completed_results) / total_puzzles
     
     print("\n====================================================", flush=True)
-    print("      QUEEN-ONLY 500-PUZZLE BENCHMARK COMPLETE", flush=True)
+    print("      QUEEN-ONLY BENCHMARK COMPLETE", flush=True)
     print("====================================================", flush=True)
     print(f"Overall Score: {total_passed}/{total_puzzles} ({pass_rate:.1f}% Pass Rate)", flush=True)
     print(f"Estimated Puzzle Rating: ~{estimated_elo} Rating", flush=True)
@@ -167,4 +168,14 @@ def run_queen_only_500():
         print(f"Error saving report: {e}", flush=True)
 
 if __name__ == "__main__":
-    run_queen_only_500()
+    import argparse
+    parser = argparse.ArgumentParser(description="Queen-only Heuristics Puzzle Benchmark")
+    parser.add_argument("--puzzles-file", type=str, default="logs/lichess_1000_puzzles.json", help="Path to the puzzles JSON file")
+    parser.add_argument("--min-rating", type=int, default=600, help="Minimum rating for tiers (inclusive)")
+    parser.add_argument("--max-rating", type=int, default=1600, help="Maximum rating for tiers (exclusive)")
+    parser.add_argument("--puzzles-per-tier", type=int, default=50, help="Number of puzzles per tier")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for sampling reproducibility")
+    parser.add_argument("--output-suffix", type=str, default="", help="Suffix for checkpoint and report files")
+    args = parser.parse_args()
+    
+    run_queen_only_500(args)

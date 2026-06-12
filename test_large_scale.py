@@ -89,19 +89,23 @@ def main():
     parser.add_argument("--puzzles-per-tier", type=int, default=50, help="Number of puzzles per tier (10 tiers, total = 10 * this value)")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for sampling reproducibility")
     parser.add_argument("--model", type=str, default="cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit", help="vLLM model name")
+    parser.add_argument("--puzzles-file", type=str, default="logs/lichess_1000_puzzles.json", help="Path to the puzzles JSON file")
+    parser.add_argument("--min-rating", type=int, default=600, help="Minimum rating for tiers (inclusive)")
+    parser.add_argument("--max-rating", type=int, default=1600, help="Maximum rating for tiers (exclusive)")
+    parser.add_argument("--output-suffix", type=str, default="", help="Suffix for checkpoint and report files")
     args = parser.parse_args()
     
     # Load all Lichess puzzles
-    puzzles_file = "logs/lichess_1000_puzzles.json"
+    puzzles_file = args.puzzles_file
     if not os.path.exists(puzzles_file):
-        print(f"Error: {puzzles_file} not found. Run filter_puzzles.py first.")
+        print(f"Error: {puzzles_file} not found. Ensure puzzle file exists.")
         sys.exit(1)
         
     with open(puzzles_file, "r") as f:
         all_puzzles = json.load(f)
         
-    # Group puzzles by 100-Elo tiers (600 to 1500)
-    tiers = {r: [] for r in range(600, 1600, 100)}
+    # Group puzzles by 100-Elo tiers
+    tiers = {r: [] for r in range(args.min_rating, args.max_rating, 100)}
     for p in all_puzzles:
         tier = (p["rating"] // 100) * 100
         if tier in tiers:
@@ -124,8 +128,9 @@ def main():
     print(f"Sampled {total_puzzles} puzzles ({args.puzzles_per_tier} per tier, seed={args.seed}) for mode '{args.mode}'.")
     
     # Define files for checkpoints and final reports
-    checkpoint_file = f"logs/large_scale_checkpoint_{args.mode}_{total_puzzles}.json"
-    report_file = f"logs/large_scale_report_{args.mode}_{total_puzzles}.json"
+    suffix = f"_{args.output_suffix}" if args.output_suffix else f"_{total_puzzles}"
+    checkpoint_file = f"logs/large_scale_checkpoint_{args.mode}{suffix}.json"
+    report_file = f"logs/large_scale_report_{args.mode}{suffix}.json"
     
     # Check if checkpoint exists
     completed_results = []
