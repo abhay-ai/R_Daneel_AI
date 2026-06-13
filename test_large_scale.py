@@ -93,8 +93,8 @@ def main():
     parser.add_argument("--min-rating", type=int, default=600, help="Minimum rating for tiers (inclusive)")
     parser.add_argument("--max-rating", type=int, default=1600, help="Maximum rating for tiers (exclusive)")
     parser.add_argument("--output-suffix", type=str, default="", help="Suffix for checkpoint and report files")
-    parser.add_argument("--api-key", type=str, default="token-not-needed", help="API key for LLM client")
-    parser.add_argument("--base-url", type=str, default="http://localhost:8000/v1", help="Base URL for LLM client")
+    parser.add_argument("--api-key", type=str, default=os.environ.get("DEEPSEEK_API_KEY") or "token-not-needed", help="API key for LLM client")
+    parser.add_argument("--base-url", type=str, default=os.environ.get("DEEPSEEK_API_BASE") or os.environ.get("OPENAI_API_BASE") or "http://localhost:8000/v1", help="Base URL for LLM client")
     args = parser.parse_args()
     
     global client
