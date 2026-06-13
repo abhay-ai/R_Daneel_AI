@@ -873,6 +873,39 @@
       color: #0891b2;
     }
 
+    .bench-tabs-header {
+      display: flex;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .bench-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 1.1rem 1.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .bench-btn:hover {
+      color: var(--text-highlight);
+    }
+    .bench-btn.active {
+      color: var(--indigo);
+      background: #ffffff;
+    }
+    .bench-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--indigo);
+    }
+
     @media (max-width: 950px) {
       .flow-steps {
         flex-direction: column;
@@ -1047,121 +1080,242 @@
     <section id="benchmark">
       <h2>Puzzle Rating Benchmarks</h2>
       <p style="font-size: 1.15rem; line-height: 1.7; margin-bottom: 2rem;">
-        To evaluate the performance of our approach, we ran a comprehensive benchmark across <strong>500 Lichess chess puzzles</strong> ranging from 600 to 1500 Elo. We compared three distinct configurations: a pure LLM baseline (given legal moves in the prompt but no tools), a symbolic Queen-only baseline, and R_Daneel_AI (LLM + Queen):
+        To evaluate the performance of our approach, we ran comprehensive benchmarks across Lichess chess puzzle datasets. Below you can switch between the standard range (600–1500 Elo) and the high-Elo range (1600–2600 Elo) to see the comparative results:
       </p>
-      
-      <div class="glass-card" style="padding: 0; overflow-x: auto; margin-bottom: 2.5rem;">
-        <table style="width: 100%;">
-          <thead>
-            <tr>
-              <th style="padding: 1.5rem;">Evaluation Metric / Elo Tier</th>
-              <th style="padding: 1.5rem;">Pure LLM Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B</span></th>
-              <th style="padding: 1.5rem;">Queen-Only Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">Queen Heuristics (Symbolic)</span></th>
-              <th style="padding: 1.5rem; color: var(--cyan);">R_Daneel_AI (Ours)<br><span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B + Queen</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Overall Performance Row -->
-            <tr style="background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--panel-border);">
-              <td colspan="4" style="padding: 1rem 1.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05rem; color: var(--text-highlight);">Overall Performance Metrics</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>Puzzles Solved</strong></td>
-              <td style="padding: 1.5rem;">80 / 500</td>
-              <td style="padding: 1.5rem;">376 / 500</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">404 / 500</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>Accuracy / Pass Rate</strong></td>
-              <td style="padding: 1.5rem;">16.0%</td>
-              <td style="padding: 1.5rem;">75.2%</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">80.8%</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>Puzzle Rating (Bisection Method)</strong></td>
-              <td style="padding: 1.5rem;">673 Rating</td>
-              <td style="padding: 1.5rem;">1399 Rating</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--accent);">1478 Rating</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>Inference Retries / Logic Loops</strong></td>
-              <td style="padding: 1.5rem;">0.24 avg retries</td>
-              <td style="padding: 1.5rem;">0.00 avg retries</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">0.38 avg retries</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>Average Move Latency</strong></td>
-              <td style="padding: 1.5rem;">17.5s / move</td>
-              <td style="padding: 1.5rem;">0.54s / move</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">24.3s / move</td>
-            </tr>
 
-            <!-- Tier breakdown Row -->
-            <tr style="background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--panel-border);">
-              <td colspan="4" style="padding: 1rem 1.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05rem; color: var(--text-highlight);">Accuracy Breakdown by Elo Tier</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>600s Tier</strong></td>
-              <td style="padding: 1.5rem;">10.0% (5/50)</td>
-              <td style="padding: 1.5rem;">98.0% (49/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">96.0% (48/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>700s Tier</strong></td>
-              <td style="padding: 1.5rem;">16.0% (8/50)</td>
-              <td style="padding: 1.5rem;">96.0% (48/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">96.0% (48/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>800s Tier</strong></td>
-              <td style="padding: 1.5rem;">10.0% (5/50)</td>
-              <td style="padding: 1.5rem;">94.0% (47/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">98.0% (49/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>900s Tier</strong></td>
-              <td style="padding: 1.5rem;">20.0% (10/50)</td>
-              <td style="padding: 1.5rem;">82.0% (41/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">84.0% (42/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>1000s Tier</strong></td>
-              <td style="padding: 1.5rem;">16.0% (8/50)</td>
-              <td style="padding: 1.5rem;">86.0% (43/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">88.0% (44/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>1100s Tier</strong></td>
-              <td style="padding: 1.5rem;">16.0% (8/50)</td>
-              <td style="padding: 1.5rem;">70.0% (35/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">82.0% (41/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>1200s Tier</strong></td>
-              <td style="padding: 1.5rem;">20.0% (10/50)</td>
-              <td style="padding: 1.5rem;">66.0% (33/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">80.0% (40/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>1300s Tier</strong></td>
-              <td style="padding: 1.5rem;">24.0% (12/50)</td>
-              <td style="padding: 1.5rem;">52.0% (26/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">68.0% (34/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>1400s Tier</strong></td>
-              <td style="padding: 1.5rem;">10.0% (5/50)</td>
-              <td style="padding: 1.5rem;">58.0% (29/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">52.0% (26/50)</td>
-            </tr>
-            <tr>
-              <td style="padding: 1.5rem;"><strong>1500s Tier</strong></td>
-              <td style="padding: 1.5rem;">18.0% (9/50)</td>
-              <td style="padding: 1.5rem;">50.0% (25/50)</td>
-              <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">64.0% (32/50)</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 2.5rem;">
+        <div class="bench-tabs-header">
+          <button class="bench-btn active" onclick="switchBenchTab(event, 'bench-std')">Standard Range (600–1500)</button>
+          <button class="bench-btn" onclick="switchBenchTab(event, 'bench-high')">High-Elo Range (1600–2600)</button>
+        </div>
+
+        <div id="bench-std" class="bench-content active" style="overflow-x: auto;">
+          <table style="width: 100%;">
+            <thead>
+              <tr>
+                <th style="padding: 1.5rem;">Evaluation Metric / Elo Tier</th>
+                <th style="padding: 1.5rem;">Pure LLM Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B</span></th>
+                <th style="padding: 1.5rem;">Queen-Only Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">Queen Heuristics (Symbolic)</span></th>
+                <th style="padding: 1.5rem; color: var(--cyan);">R_Daneel_AI (Ours)<br><span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B + Queen</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Overall Performance Row -->
+              <tr style="background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--panel-border);">
+                <td colspan="4" style="padding: 1rem 1.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05rem; color: var(--text-highlight);">Overall Performance Metrics</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Puzzles Solved</strong></td>
+                <td style="padding: 1.5rem;">80 / 500</td>
+                <td style="padding: 1.5rem;">376 / 500</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">404 / 500</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Accuracy / Pass Rate</strong></td>
+                <td style="padding: 1.5rem;">16.0%</td>
+                <td style="padding: 1.5rem;">75.2%</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">80.8%</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Puzzle Rating (Bisection Method)</strong></td>
+                <td style="padding: 1.5rem;">673 Rating</td>
+                <td style="padding: 1.5rem;">1399 Rating</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--accent);">1478 Rating</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Inference Retries / Logic Loops</strong></td>
+                <td style="padding: 1.5rem;">0.24 avg retries</td>
+                <td style="padding: 1.5rem;">0.00 avg retries</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">0.38 avg retries</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Average Move Latency</strong></td>
+                <td style="padding: 1.5rem;">17.5s / move</td>
+                <td style="padding: 1.5rem;">0.54s / move</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">24.3s / move</td>
+              </tr>
+
+              <!-- Tier breakdown Row -->
+              <tr style="background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--panel-border);">
+                <td colspan="4" style="padding: 1rem 1.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05rem; color: var(--text-highlight);">Accuracy Breakdown by Elo Tier</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>600s Tier</strong></td>
+                <td style="padding: 1.5rem;">10.0% (5/50)</td>
+                <td style="padding: 1.5rem;">98.0% (49/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">96.0% (48/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>700s Tier</strong></td>
+                <td style="padding: 1.5rem;">16.0% (8/50)</td>
+                <td style="padding: 1.5rem;">96.0% (48/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">96.0% (48/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>800s Tier</strong></td>
+                <td style="padding: 1.5rem;">10.0% (5/50)</td>
+                <td style="padding: 1.5rem;">94.0% (47/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">98.0% (49/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>900s Tier</strong></td>
+                <td style="padding: 1.5rem;">20.0% (10/50)</td>
+                <td style="padding: 1.5rem;">82.0% (41/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">84.0% (42/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1000s Tier</strong></td>
+                <td style="padding: 1.5rem;">16.0% (8/50)</td>
+                <td style="padding: 1.5rem;">86.0% (43/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">88.0% (44/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1100s Tier</strong></td>
+                <td style="padding: 1.5rem;">16.0% (8/50)</td>
+                <td style="padding: 1.5rem;">70.0% (35/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">82.0% (41/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1200s Tier</strong></td>
+                <td style="padding: 1.5rem;">20.0% (10/50)</td>
+                <td style="padding: 1.5rem;">66.0% (33/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">80.0% (40/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1300s Tier</strong></td>
+                <td style="padding: 1.5rem;">24.0% (12/50)</td>
+                <td style="padding: 1.5rem;">52.0% (26/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">68.0% (34/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1400s Tier</strong></td>
+                <td style="padding: 1.5rem;">10.0% (5/50)</td>
+                <td style="padding: 1.5rem;">58.0% (29/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">52.0% (26/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1500s Tier</strong></td>
+                <td style="padding: 1.5rem;">18.0% (9/50)</td>
+                <td style="padding: 1.5rem;">50.0% (25/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">64.0% (32/50)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="bench-high" class="bench-content" style="display: none; overflow-x: auto;">
+          <table style="width: 100%;">
+            <thead>
+              <tr>
+                <th style="padding: 1.5rem;">Evaluation Metric / Elo Tier</th>
+                <th style="padding: 1.5rem;">Pure LLM Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B</span></th>
+                <th style="padding: 1.5rem;">Queen-Only Baseline<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: var(--font-mono);">Queen Heuristics (Symbolic)</span></th>
+                <th style="padding: 1.5rem; color: var(--cyan);">R_Daneel_AI (Ours)<br><span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal; font-family: var(--font-mono);">cyankiwi/gemma-4-26B + Queen</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Overall Performance Row -->
+              <tr style="background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--panel-border);">
+                <td colspan="4" style="padding: 1rem 1.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05rem; color: var(--text-highlight);">Overall Performance Metrics</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Puzzles Solved</strong></td>
+                <td style="padding: 1.5rem;">101 / 500</td>
+                <td style="padding: 1.5rem;">170 / 500</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">177 / 500</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Accuracy / Pass Rate</strong></td>
+                <td style="padding: 1.5rem;">20.2%</td>
+                <td style="padding: 1.5rem;">34.0%</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">35.4%</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Puzzle Rating (Bisection Method)</strong></td>
+                <td style="padding: 1.5rem;">1741 Rating</td>
+                <td style="padding: 1.5rem;">1919 Rating</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--accent);">1936 Rating</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Inference Retries / Logic Loops</strong></td>
+                <td style="padding: 1.5rem;">0.22 avg retries</td>
+                <td style="padding: 1.5rem;">0.00 avg retries</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">1.40 avg retries</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>Average Move Latency</strong></td>
+                <td style="padding: 1.5rem;">38.8s / move</td>
+                <td style="padding: 1.5rem;">0.46s / move</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">29.6s / move</td>
+              </tr>
+
+              <!-- Tier breakdown Row -->
+              <tr style="background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--panel-border);">
+                <td colspan="4" style="padding: 1rem 1.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05rem; color: var(--text-highlight);">Accuracy Breakdown by Elo Tier</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1600s Tier</strong></td>
+                <td style="padding: 1.5rem;">20.0% (10/50)</td>
+                <td style="padding: 1.5rem;">46.0% (23/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">42.0% (21/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1700s Tier</strong></td>
+                <td style="padding: 1.5rem;">26.0% (13/50)</td>
+                <td style="padding: 1.5rem;">50.0% (25/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">50.0% (25/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1800s Tier</strong></td>
+                <td style="padding: 1.5rem;">24.0% (12/50)</td>
+                <td style="padding: 1.5rem;">44.0% (22/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">48.0% (24/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>1900s Tier</strong></td>
+                <td style="padding: 1.5rem;">12.0% (6/50)</td>
+                <td style="padding: 1.5rem;">38.0% (19/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">44.0% (22/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>2000s Tier</strong></td>
+                <td style="padding: 1.5rem;">26.0% (13/50)</td>
+                <td style="padding: 1.5rem;">40.0% (20/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">44.0% (22/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>2100s Tier</strong></td>
+                <td style="padding: 1.5rem;">26.0% (13/50)</td>
+                <td style="padding: 1.5rem;">22.0% (11/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">30.0% (15/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>2200s Tier</strong></td>
+                <td style="padding: 1.5rem;">18.0% (9/50)</td>
+                <td style="padding: 1.5rem;">36.0% (18/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">28.0% (14/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>2300s Tier</strong></td>
+                <td style="padding: 1.5rem;">8.0% (4/50)</td>
+                <td style="padding: 1.5rem;">26.0% (13/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">22.0% (11/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>2400s Tier</strong></td>
+                <td style="padding: 1.5rem;">24.0% (12/50)</td>
+                <td style="padding: 1.5rem;">20.0% (10/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">30.0% (15/50)</td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem;"><strong>2500s Tier</strong></td>
+                <td style="padding: 1.5rem;">18.0% (9/50)</td>
+                <td style="padding: 1.5rem;">18.0% (9/50)</td>
+                <td style="padding: 1.5rem; font-weight: bold; color: var(--cyan);">16.0% (8/50)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1358,6 +1512,19 @@
       
       // Activate target
       document.getElementById(tabId).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+
+    function switchBenchTab(evt, tabId) {
+      const contents = document.getElementsByClassName("bench-content");
+      for (let i = 0; i < contents.length; i++) {
+        contents[i].style.display = "none";
+      }
+      const buttons = document.getElementsByClassName("bench-btn");
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("active");
+      }
+      document.getElementById(tabId).style.display = "block";
       evt.currentTarget.classList.add("active");
     }
 
