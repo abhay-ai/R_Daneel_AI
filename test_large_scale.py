@@ -9,8 +9,8 @@ from openai import OpenAI
 import queen as prolog_referee
 import lichess_bot
 
-# Initialize OpenAI client (pointing to local vLLM)
-client = OpenAI(base_url="http://localhost:8000/v1", api_key="token-not-needed")
+# Global OpenAI client reference (initialized in main() after parsing arguments)
+client = None
 
 def get_baseline_llm_move(fen, legal_moves, model_name, error_feedback="", retry_count=0):
     if retry_count >= 3:
@@ -93,7 +93,13 @@ def main():
     parser.add_argument("--min-rating", type=int, default=600, help="Minimum rating for tiers (inclusive)")
     parser.add_argument("--max-rating", type=int, default=1600, help="Maximum rating for tiers (exclusive)")
     parser.add_argument("--output-suffix", type=str, default="", help="Suffix for checkpoint and report files")
+    parser.add_argument("--api-key", type=str, default="token-not-needed", help="API key for LLM client")
+    parser.add_argument("--base-url", type=str, default="http://localhost:8000/v1", help="Base URL for LLM client")
     args = parser.parse_args()
+    
+    global client
+    client = OpenAI(base_url=args.base_url, api_key=args.api_key)
+    lichess_bot.openai_client = client
     
     # Load all Lichess puzzles
     puzzles_file = args.puzzles_file
