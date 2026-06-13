@@ -4,12 +4,12 @@ import json
 import os
 import chess
 
-def filter_puzzles_high_elo():
-    print("Starting Lichess high-Elo puzzle filtration and sampling...")
+def filter_puzzles_custom(args):
+    print(f"Starting Lichess puzzle filtration and sampling from {args.min_rating} to {args.max_rating}...")
     
-    # We want 50 puzzles per tier from 1600 to 2500 (10 tiers: 1600, 1700, ..., 2500)
-    tiers = {r: [] for r in range(1600, 2600, 100)}
-    limit_per_tier = 50
+    # We want puzzles per tier grouped in 100-Elo brackets
+    tiers = {r: [] for r in range(args.min_rating, args.max_rating, 100)}
+    limit_per_tier = args.puzzles_per_tier
     total_needed = len(tiers) * limit_per_tier
     total_collected = 0
     
@@ -89,11 +89,19 @@ def filter_puzzles_high_elo():
     
     # Save to file
     os.makedirs("logs", exist_ok=True)
-    output_file = "logs/lichess_500_puzzles_high_elo.json"
+    output_file = args.output
     with open(output_file, "w") as f:
         json.dump(sampled_puzzles, f, indent=4)
         
     print(f"\nSuccessfully saved {len(sampled_puzzles)} sampled puzzles to {output_file}")
 
 if __name__ == "__main__":
-    filter_puzzles_high_elo()
+    import argparse
+    parser = argparse.ArgumentParser(description="Filter Lichess chess puzzles by Elo tiers")
+    parser.add_argument("--min-rating", type=int, default=500, help="Minimum rating (inclusive)")
+    parser.add_argument("--max-rating", type=int, default=2600, help="Maximum rating (exclusive)")
+    parser.add_argument("--puzzles-per-tier", type=int, default=50, help="Number of puzzles per tier")
+    parser.add_argument("--output", type=str, default="logs/lichess_puzzles_500_to_2600.json", help="Path to output JSON file")
+    args = parser.parse_args()
+    
+    filter_puzzles_custom(args)
