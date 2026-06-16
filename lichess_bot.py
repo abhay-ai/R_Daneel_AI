@@ -10,11 +10,40 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-openai_client = OpenAI(base_url="http://localhost:8000/v1", api_key="token-not-needed")
+# Determine backend credentials dynamically based on target model name
+MODEL_NAME = os.environ.get("LICHESS_MODEL_NAME", "cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit")
+if "deepseek" in MODEL_NAME.lower():
+    base_url = os.environ.get("DEEPSEEK_API_BASE") or "https://api.deepseek.com"
+    api_key = os.environ.get("DEEPSEEK_API_KEY")
+    if not api_key:
+        print("⚠️ Warning: DEEPSEEK_API_KEY is not set in environment or .env file, but DeepSeek model is selected.")
+else:
+    base_url = "http://localhost:8000/v1"
+    api_key = "token-not-needed"
+
+openai_client = OpenAI(base_url=base_url, api_key=api_key)
+print(f"🤖 Configured LLM Client: {base_url} using model '{MODEL_NAME}'")
 
 
 # Move this to the global scope at the top of lichess_bot.py
 import queen as prolog_referee
+
+def sanitize_prolog_output(obj):
+    if isinstance(obj, dict):
+        return {k: sanitize_prolog_output(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_prolog_output(x) for x in obj]
+    elif isinstance(obj, tuple):
+        return tuple(sanitize_prolog_output(x) for x in obj)
+    elif isinstance(obj, set):
+        return {sanitize_prolog_output(x) for x in obj}
+    else:
+        typename = type(obj).__name__
+        if typename in ('Variable', 'Atom'):
+            return str(obj)
+        if isinstance(obj, (int, float, str, bool)) or obj is None:
+            return obj
+        return str(obj)
 
 def log_experiment_data(game_id, move_number, fen, retries, execution_time, model_name, thoughts="", strategy=""):
     os.makedirs('logs', exist_ok=True)
@@ -335,9 +364,9 @@ def get_legal_llm_move(fen, model_name, error_feedback="", retry_count=0, accumu
     
     # Pre-calculate starting FEN data to save round-trips and prevent omissions
     try:
-        start_summary = prolog_referee.get_tactical_summary(fen)
-        start_material = prolog_referee.get_material_status(fen)
-        start_positional = prolog_referee.get_positional_evaluation(fen)
+        start_summary = sanitize_prolog_output(prolog_referee.get_tactical_summary(fen))
+        start_material = sanitize_prolog_output(prolog_referee.get_material_status(fen))
+        start_positional = sanitize_prolog_output(prolog_referee.get_positional_evaluation(fen))
     except Exception as e:
         print(f"Error pre-calculating starting FEN data: {e}")
         start_summary = {"in_check": False}
@@ -391,12 +420,12 @@ def get_legal_llm_move(fen, model_name, error_feedback="", retry_count=0, accumu
     max_retries = 5
     max_tool_calls_per_retry = 25
     
-    simulated_count = 0
-    simulated_moves = set()
     summary_called_on_start_fen = True
     initial_fen_base = " ".join(fen.split()[:4])
     
     while current_retry <= max_retries:
+        simulated_count = 0
+        simulated_moves = set()
         got_move = False
         tool_call_count = 0
         
@@ -406,7 +435,7 @@ def get_legal_llm_move(fen, model_name, error_feedback="", retry_count=0, accumu
             if called_fen_base == initial_fen_base:
                 summary_called_on_start_fen = True
             raw_summary = prolog_referee.get_tactical_summary(fen)
-            return trim_tactical_summary(raw_summary)
+            return trim_tactical_summary(sanitize_prolog_output(raw_summary))
         
         def simulate_move(fen: str, move: str) -> str:
             """
@@ -429,14 +458,14 @@ def get_legal_llm_move(fen, model_name, error_feedback="", retry_count=0, accumu
             return prolog_referee.simulate_move(fen, move)
             
         available_tools = {
-            'get_legal_moves': prolog_referee.get_legal_moves,
+            'get_legal_moves': lambda fen: sanitize_prolog_output(prolog_referee.get_legal_moves(fen)),
             'get_tactical_summary': get_tactical_summary_wrapper,
-            'convert_san_to_uci': prolog_referee.convert_san_to_uci,
-            'convert_uci_to_san': prolog_referee.convert_uci_to_san,
+            'convert_san_to_uci': lambda fen, move_san: sanitize_prolog_output(prolog_referee.convert_san_to_uci(fen, move_san)),
+            'convert_uci_to_san': lambda fen, move_uci: sanitize_prolog_output(prolog_referee.convert_uci_to_san(fen, move_uci)),
             'simulate_move': simulate_move,
-            'get_material_status': prolog_referee.get_material_status,
-            'get_positional_evaluation': prolog_referee.get_positional_evaluation,
-            'get_attackers_defenders': prolog_referee.get_attackers_defenders
+            'get_material_status': lambda fen: sanitize_prolog_output(prolog_referee.get_material_status(fen)),
+            'get_positional_evaluation': lambda fen: sanitize_prolog_output(prolog_referee.get_positional_evaluation(fen)),
+            'get_attackers_defenders': lambda fen, square: sanitize_prolog_output(prolog_referee.get_attackers_defenders(fen, square))
         }
         
         openai_tools = [
@@ -588,6 +617,41 @@ def get_legal_llm_move(fen, model_name, error_feedback="", retry_count=0, accumu
                 )
                 
                 assistant_message = response.choices[0].message
+                
+                # Parse DeepSeek XML tool calls if SDK tool_calls is empty but XML tags are present
+                content = assistant_message.content or ""
+                if not assistant_message.tool_calls and "<｜｜DSML｜｜tool_calls>" in content:
+                    try:
+                        # Find all invoke blocks
+                        invoke_blocks = re.findall(r'<｜｜DSML｜｜invoke name="([^"]+)"\s*>(.*?)</｜｜DSML｜｜invoke\s*>', content, re.DOTALL)
+                        parsed_xml_tool_calls = []
+                        for idx, (func_name, block_content) in enumerate(invoke_blocks):
+                            # Find parameters: <｜｜DSML｜｜parameter name="param_name" ...>value</｜｜DSML｜｜parameter>
+                            param_matches = re.findall(r'<｜｜DSML｜｜parameter name="([^"]+)"[^>]*>(.*?)</｜｜DSML｜｜parameter\s*>', block_content, re.DOTALL)
+                            func_args = {}
+                            for param_name, param_val in param_matches:
+                                func_args[param_name] = param_val.strip()
+                            
+                            # Create a mock tool call class/object
+                            class MockFunction:
+                                def __init__(self, name, arguments):
+                                    self.name = name
+                                    self.arguments = json.dumps(arguments)
+                            class MockToolCall:
+                                def __init__(self, id, function):
+                                    self.id = id
+                                    self.type = "function"
+                                    self.function = function
+                            
+                            mock_func = MockFunction(func_name, func_args)
+                            mock_call = MockToolCall(f"call_ds_{idx}_{int(time.time())}", mock_func)
+                            parsed_xml_tool_calls.append(mock_call)
+                        
+                        if parsed_xml_tool_calls:
+                            assistant_message.tool_calls = parsed_xml_tool_calls
+                            print(f"Parsed {len(parsed_xml_tool_calls)} tool calls from native XML tags.")
+                    except Exception as parse_xml_err:
+                        print(f"Error parsing XML tool calls: {parse_xml_err}")
                 
                 # Append assistant message to chat history as standard dict
                 msg_to_append = {
@@ -891,6 +955,46 @@ def get_legal_llm_move(fen, model_name, error_feedback="", retry_count=0, accumu
 
 # --- Lichess Event Framework ---
 
+def send_long_chat(client, game_id, text, prefix="", max_messages=3):
+    """Splits a long message into chunks of at most 140 characters and sends them to Lichess."""
+    if not text:
+        return
+        
+    # Clean text
+    text = re.sub(r'<[^>]*>', '', text)  # Strip HTML
+    text = re.sub(r'[*`#_]', '', text)   # Strip Markdown
+    text = text.replace('\n', ' ').strip()
+    
+    full_text = f"{prefix} {text}" if prefix else text
+    words = full_text.split()
+    
+    chunks = []
+    current_chunk = []
+    current_len = 0
+    
+    for word in words:
+        word_len = len(word) + (1 if current_chunk else 0)
+        if current_len + word_len <= 140:
+            current_chunk.append(word)
+            current_len += word_len
+        else:
+            if current_chunk:
+                chunks.append(" ".join(current_chunk))
+            current_chunk = [word]
+            current_len = len(word)
+            
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+        
+    for chunk in chunks[:max_messages]:
+        try:
+            client.bots.post_message(game_id, chunk)
+            print(f"💬 Sent chat chunk: {chunk}")
+            time.sleep(0.5) # Small delay to preserve order and avoid rate limiting
+        except Exception as e:
+            print(f"⚠️ Failed to send chat chunk: {e}")
+            break
+
 def process_game(client, game_id, my_color, model_name):
     """Listens to the active Lichess game stream and reacts when it is the bot's turn."""
     # Initialize game strategy
@@ -947,6 +1051,13 @@ def process_game(client, game_id, my_color, model_name):
                     try:
                         client.bots.make_move(game_id, ai_move)
                         print(f"✅ Published move {ai_move} straight to Lichess.")
+                        
+                        # Post thinking/strategy to Lichess chat in chunks
+                        if current_strategy:
+                            send_long_chat(client, game_id, current_strategy, prefix="Strategy:")
+                        elif thoughts:
+                            send_long_chat(client, game_id, thoughts, prefix="Thinking:")
+                            
                     except berserk.exceptions.ResponseError:
                         print("⚠️ Move submission skipped: The game room has already closed.")
                         break
@@ -957,6 +1068,41 @@ def process_game(client, game_id, my_color, model_name):
                     except berserk.exceptions.ResponseError:
                         pass
                     break
+                    
+    # Send goodbye chat message when the game loop finishes
+    send_long_chat(client, game_id, "Code at https://github.com/abhay-ai/R_Daneel_AI", prefix="Thanks for the game! 🤝")
+    
+    # Upload game log to dpaste.com and share link in chat
+    try:
+        log_file = os.path.join('logs', f'game_{game_id}.jsonl')
+        if os.path.exists(log_file):
+            print(f"📦 Reading log file '{log_file}' for upload...")
+            with open(log_file, 'r', encoding='utf-8') as f:
+                log_content = f.read()
+            
+            # Post to dpaste.com API using URL encoding
+            import urllib.request
+            import urllib.parse
+            
+            data_dict = {
+                'content': log_content,
+                'title': f"R_Daneel_AI Chess Game Log {game_id}",
+                'format': 'url',
+                'expires': '2592000' # 30 days in seconds
+            }
+            data = urllib.parse.urlencode(data_dict).encode('utf-8')
+            req = urllib.request.Request('https://dpaste.com/api/', data=data, method='POST')
+            req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+            
+            with urllib.request.urlopen(req, timeout=5) as response:
+                paste_url = response.read().decode('utf-8').strip()
+                
+            if paste_url:
+                raw_url = f"{paste_url}.txt"
+                print(f"📦 Uploaded log successfully: {raw_url}")
+                send_long_chat(client, game_id, f"Copy raw logs from {raw_url} and paste into visualizer.html to replay thoughts", prefix="Replay analysis:")
+    except Exception as upload_err:
+        print(f"⚠️ Failed to upload game log to dpaste: {upload_err}")
  
 def main():
     API_TOKEN = os.environ.get("LICHESS_API_TOKEN")
@@ -1018,6 +1164,11 @@ def main():
             my_color = 'white' if game_full['white'].get('id') == my_id else 'black'
             
             print(f"🏁 Game started! Game ID: {game_id}. Playing as {my_color.upper()}.")
+            
+            # Send intro chat message advertising the bot and Queen
+            intro_msg = "Hello! I'm R_Daneel_AI, a neuro-symbolic bot. Strategy by LLM, rules by Queen Prolog referee."
+            send_long_chat(client, game_id, "https://abhay-ai.github.io/Queen/", prefix=intro_msg)
+                
             process_game(client, game_id, my_color, MODEL_NAME)
             print("🏁 Game concluded. Returning to listener state.")
 

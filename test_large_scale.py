@@ -5,7 +5,7 @@ import json
 import re
 import argparse
 import random
-from openai import OpenAI
+from openai import OpenAI, RateLimitError, APIConnectionError, APITimeoutError, APIStatusError
 import queen as prolog_referee
 import lichess_bot
 
@@ -164,27 +164,44 @@ def main():
         retries = 0
         thoughts = ""
         
-        try:
-            if args.mode == "baseline":
+        # Try to run the puzzle with a retry loop for transient API/network/throttling errors
+        max_api_retries = 5
+        api_retry_delay = 30  # Start with 30s sleep on rate limits/network drops
+        
+        for api_attempt in range(max_api_retries):
+            try:
+                if args.mode == "baseline":
+                    legal_moves = prolog_referee.get_legal_moves(puzzle["fen"])
+                    move, retries, thoughts = get_baseline_llm_move(
+                        puzzle["fen"],
+                        legal_moves,
+                        model_name=args.model
+                    )
+                else: # neuro_symbolic
+                    move, retries, thoughts, strategy = lichess_bot.get_legal_llm_move(
+                        puzzle["fen"],
+                        model_name=args.model,
+                        current_strategy="Analyze the tactical board layout and select the best move."
+                    )
+                break  # Success, break the API retry loop
+            except (RateLimitError, APIConnectionError, APITimeoutError, APIStatusError) as api_err:
+                print(f"⚠️ API/Network Error on puzzle {puzzle['id']} (attempt {api_attempt + 1}/{max_api_retries}): {api_err}")
+                if api_attempt < max_api_retries - 1:
+                    print(f"Sleeping for {api_retry_delay} seconds before retrying...")
+                    time.sleep(api_retry_delay)
+                    api_retry_delay *= 2  # Exponential backoff
+                else:
+                    print(f"❌ API retries exhausted for puzzle {puzzle['id']}. Raising error.")
+                    raise
+            except Exception as e:
+                # Catch-all for unexpected code crashes (non-API logic bugs)
+                print(f"Execution error on puzzle {puzzle['id']}: {e}")
+                # Fallback in case of code-level crash
                 legal_moves = prolog_referee.get_legal_moves(puzzle["fen"])
-                move, retries, thoughts = get_baseline_llm_move(
-                    puzzle["fen"],
-                    legal_moves,
-                    model_name=args.model
-                )
-            else: # neuro_symbolic
-                move, retries, thoughts, strategy = lichess_bot.get_legal_llm_move(
-                    puzzle["fen"],
-                    model_name=args.model,
-                    current_strategy="Analyze the tactical board layout and select the best move."
-                )
-        except Exception as e:
-            print(f"Execution error on puzzle {puzzle['id']}: {e}")
-            # Fallback in case of code-level crash
-            legal_moves = prolog_referee.get_legal_moves(puzzle["fen"])
-            move = legal_moves[0] if legal_moves else "a2a3"
-            retries = 1
-            thoughts = f"Execution error: {e}"
+                move = legal_moves[0] if legal_moves else "a2a3"
+                retries = 1
+                thoughts = f"Execution error: {e}"
+                break
             
         elapsed = time.time() - start_time
         success = move in puzzle["best_moves"]

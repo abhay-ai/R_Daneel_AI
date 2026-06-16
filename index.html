@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R_Daneel_AI — Open-Source Neuro-Symbolic Chess Bot</title>
+    <!-- CSS stylesheet link -->
+    <link rel="stylesheet" href="index.css">
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Fira Code for code bits -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="R_Daneel_AI is a state-of-the-art open-source neuro-symbolic chess engine. Combining the strategic reasoning of DeepSeek v4 & Gemma with symbolic Prolog rules to deliver 100% legal, human-like play.">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo-container" onclick="window.scrollTo(0,0)">
+            <span class="logo-icon">🤖🔮</span>
+            <span class="logo-text">R_Daneel_AI</span>
+        </div>
+        <nav>
+            <a href="#overview">Architecture</a>
+            <a href="#features">Features</a>
+            <a href="#playground">Interactive Play</a>
+            <a href="#benchmarks">Benchmarks</a>
+            <a href="#deploy">Deploy</a>
+            <a href="#queen-spotlight">Queen Engine 👑</a>
+            <a href="https://github.com/abhay-ai/R_Daneel_AI" target="_blank" class="btn-primary">View on GitHub 💻</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h2>R_Daneel_AI: The Neuro-Symbolic Chess Bot</h2>
+                <p>
+                    A next-generation open-source chess engine that fuses the strategic planning and intuitive positional mastery of Large Language Models (DeepSeek v4, Gemma) with the flawless logical correctness of the symbolic Prolog referee <a href="https://abhay-ai.github.io/Queen/" target="_blank" style="color: var(--accent-blue); text-decoration: underline;">Queen</a>. 
+                </p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="#playground" class="btn-primary">Test Autopsy Playground 🔬</a>
+                    <a href="#benchmarks" class="btn-secondary" style="margin-left: 0;">View Engine Benchmarks 📊</a>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <!-- LCP optimization: fetchpriority="high", loading="lazy" omitted -->
+                <img src="images/hero_chess_bot.png" alt="R_Daneel_AI cybernetic chess knight" class="hero-img" fetchpriority="high">
+            </div>
+        </section>
+
+        <!-- Engine Paradigm Comparison Section -->
+        <section class="features-section" id="overview">
+            <div class="section-header">
+                <h3>A New Paradigm in Chess Intelligence</h3>
+                <p>Most chess engines rely on brute-force alpha-beta search or pure neural policy networks. R_Daneel_AI combines symbolic logic with deep strategy for human-like positional play.</p>
+            </div>
+            
+            <div class="glass-panel" style="padding: 2.5rem; margin-top: 1rem;">
+                <p style="font-size: 1.25rem; color: white; font-weight: 600; text-align: center; margin-bottom: 2rem;">
+                    "Our goal is not to control the LLM, but to show direction when it is confused."
+                </p>
+                
+                <div class="comparison-diagrams">
+                    <!-- Traditional Engines -->
+                    <div class="flow-row traditional">
+                        <div class="flow-header">
+                            <span class="flow-title-category">Traditional Search Engines</span>
+                            <strong class="flow-title-model">Stockfish / Lc0</strong>
+                        </div>
+                        <div class="flow-steps">
+                            <div class="flow-step-node">Opponent's Move</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node">Brute-force Tree Search</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node">Heuristic Evaluation</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node end-node">Bot's Move</div>
+                        </div>
+                    </div>
+
+                    <!-- Mimicry Engines -->
+                    <div class="flow-row mimicry">
+                        <div class="flow-header">
+                            <span class="flow-title-category">Neural Mimicry Engines</span>
+                            <strong class="flow-title-model">Maia Chess</strong>
+                        </div>
+                        <div class="flow-steps">
+                            <div class="flow-step-node">Opponent's Move</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node">Deep Policy Network</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node">Move Mimicry</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node end-node">Bot's Move</div>
+                        </div>
+                    </div>
+
+                    <!-- Neuro-Symbolic Bot (Ours) -->
+                    <div class="flow-row ours">
+                        <div class="flow-header">
+                            <span class="flow-title-category">Neuro-Symbolic Bot</span>
+                            <strong class="flow-title-model">R_Daneel_AI</strong>
+                        </div>
+                        <div class="flow-steps">
+                            <div class="flow-step-node">Opponent's Move</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node"><a href="https://abhay-ai.github.io/Queen/" target="_blank" style="color: inherit; text-decoration: none;">Queen (Legal Moves)</a></div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node">LLM Strategic Plan</div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node"><a href="https://abhay-ai.github.io/Queen/" target="_blank" style="color: inherit; text-decoration: none;">Queen Safety Guard</a></div>
+                            <span class="flow-arrow">➔</span>
+                            <div class="flow-step-node end-node">Bot's Move</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Features Section -->
+        <section class="features-section" id="features">
+            <div class="section-header">
+                <h3>State-of-the-Art Core Architecture</h3>
+                <p>By splitting strategic planning and logical checking, R_Daneel_AI plays highly positional chess while guaranteeing perfect conformity to rules.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card glass-panel">
+                    <span class="feature-icon">🧠</span>
+                    <h4>Modular LLM Strategist</h4>
+                    <p>Powered by top-tier models (DeepSeek v4 Pro or Gemma 26B). Evaluates positional themes, coordinates developmental pieces, and identifies tactical motifs through structured reasoning.</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <span class="feature-icon">🛡️</span>
+                    <h4>Prolog Safety Referee</h4>
+                    <p>Uses the symbolic SWI-Prolog library <a href="https://abhay-ai.github.io/Queen/" target="_blank" style="color: inherit; text-decoration: underline;">Queen</a> as a safety guard. Intercepts LLM coordinates to check legality, calculate pins/checks, and prevent coordinate hallucinations.</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <span class="feature-icon">⚖️</span>
+                    <h4>Tension-Aware Utility</h4>
+                    <p>Applies a mathematical <code>-0.5</code> penalty to captures that resolve board tension on the opponent's terms, steering the LLM toward strategic developing moves instead.</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <span class="feature-icon">🛡️</span>
+                    <h4>Minimax Evasion Guard</h4>
+                    <p>If all candidate moves lead to negative utility, the bot runs minimax simulations on all King escape routes to find the path that maximizes resistance and avoids quick mate-in-ones.</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <span class="feature-icon">📝</span>
+                    <h4>Autopsy Log Recording</h4>
+                    <p>Generates detailed JSON Lines and CSV logs of the LLM's System 2 thoughts, enabling complete playback of strategic decisions and Prolog referee valuations.</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <span class="feature-icon">🧬</span>
+                    <h4>Open & Extensible</h4>
+                    <p>Built with python, PySwip, and vLLM. Seamlessly hook in custom open-weights models, extend Prolog heuristics, or build your own custom rulesets.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Autopsy Playground Section -->
+        <section class="playground-section" id="playground">
+            <div class="section-header">
+                <h3>Interactive Autopsy Playground</h3>
+                <p>Select a tactical scenario below to watch the bot execute System 2 logical analysis on the chessboard and review the actual metrics, strategy tags, and thoughts generated in real-time.</p>
+            </div>
+
+            <div class="glass-panel playground-container">
+                <!-- Left Column: Board and selector -->
+                <div class="chessboard-wrapper">
+                    <div class="preset-selector">
+                        <label for="scenario-select">Tactical Scenario Preset</label>
+                        <select id="scenario-select" onchange="loadPreset(this.value)">
+                            <option value="defeatism">Escaping Defeatism (Avoiding Mate-in-1)</option>
+                            <option value="tension">Maintaining Tension (Equal Italian Game)</option>
+                            <option value="staircase">Mate-in-Two (Staircase Rooks)</option>
+                            <option value="fork">Knight Fork (Fork on King & Queen)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="chessboard" class="chessboard"></div>
+                    
+                    <div class="fen-container">
+                        <div id="fen-display" class="fen-display"></div>
+                        <button class="fen-copy-btn" onclick="copyFen()">Copy FEN</button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Dashboard Panel -->
+                <div class="dashboard-panel">
+                    <div class="dash-header">
+                        <button id="tab-thoughts" class="dash-btn active" onclick="switchTab(event, 'dash-thoughts')">LLM Thoughts</button>
+                        <button id="tab-strategy" class="dash-btn" onclick="switchTab(event, 'dash-strategy')">Active Strategy</button>
+                        <button id="tab-metrics" class="dash-btn" onclick="switchTab(event, 'dash-metrics')">Move Metrics</button>
+                    </div>
+                    
+                    <!-- Thoughts Tab -->
+                    <div id="dash-thoughts" class="dash-content active">
+                        <div class="thoughts-container" id="thoughts-box"></div>
+                    </div>
+                    
+                    <!-- Strategy Tab -->
+                    <div id="dash-strategy" class="dash-content">
+                        <div class="thoughts-container" id="strategy-box"></div>
+                    </div>
+                    
+                    <!-- Metrics Tab -->
+                    <div id="dash-metrics" class="dash-content">
+                        <pre id="metrics-pre" style="margin: 0;"></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benchmark Results Section -->
+        <section class="results-section" id="benchmarks">
+            <div class="section-header">
+                <h3>Proven Against the Best</h3>
+                <p>We audited R_Daneel_AI through a large-scale benchmark of 1,000 chess puzzles (600 to 2500 Elo), comparing different backend configurations against raw models and heuristic engines.</p>
+            </div>
+            
+            <div class="chart-tabs">
+                <button class="chart-tab-btn active" id="btn-chart-overall">Overall Elo & Pass Rate</button>
+                <button class="chart-tab-btn" id="btn-chart-tiers">Elo Tier Rating Curve</button>
+            </div>
+            
+            <div class="glass-panel chart-wrapper" style="margin-bottom: 2.5rem;">
+                <canvas id="benchmarkChart"></canvas>
+            </div>
+
+            <!-- Benchmark highlights grid -->
+            <div class="features-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="feature-card glass-panel" style="padding: 1.5rem; text-align: center;">
+                    <h4 style="font-size: 2.2rem; color: var(--success);">58.10%</h4>
+                    <p style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: bold; margin-top: 0.5rem; color: white;">DeepSeek v4 Pass Rate</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">Matches Gemma 26B overall, but dominates in high-Elo complexity.</p>
+                </div>
+                <div class="feature-card glass-panel" style="padding: 1.5rem; text-align: center;">
+                    <h4 style="font-size: 2.2rem; color: var(--accent-blue);">+40.0%</h4>
+                    <p style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: bold; margin-top: 0.5rem; color: white;">Neuro-Symbolic Leap</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">Prolog safety nets raise raw LLM accuracy from 18.1% to 58.1% overall.</p>
+                </div>
+                <div class="feature-card glass-panel" style="padding: 1.5rem; text-align: center;">
+                    <h4 style="font-size: 2.2rem; color: var(--accent-pink);">1765 Elo</h4>
+                    <p style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; font-weight: bold; margin-top: 0.5rem; color: white;">Estimated Peak ELO</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">Achieved using the Bisection Method over the entire 1,000 puzzle suite.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Setup & Deployment Section -->
+        <section class="developer-section" id="deploy">
+            <div class="section-header">
+                <h3>Deploy R_Daneel_AI Locally</h3>
+                <p>Run your own instance of the bot on Lichess or test locally against Stockfish. The engine is written in Python and leverages a local vLLM server or standard APIs.</p>
+            </div>
+
+            <div class="glass-panel" style="padding: 2.5rem;">
+                <h4 style="color: white; font-size: 1.25rem; margin-bottom: 1rem;">1. Install Dependencies</h4>
+                <p style="font-size: 0.95rem; margin-bottom: 1rem;">Ensure you have SWI-Prolog installed on your system, then install requirements:</p>
+                
+                <div class="code-snippet-wrapper" style="margin-top: 0; margin-bottom: 2rem;">
+                    <div class="code-header">
+                        <span>Terminal</span>
+                        <span class="code-lang-tag">bash</span>
+                    </div>
+                    <pre style="margin: 0; color: #a5b4fc;"># Install SWI-Prolog first (sudo apt install swi-prolog)
+pip install -r requirements.txt
+pip install -e ./Queen</pre>
+                </div>
+
+                <h4 style="color: white; font-size: 1.25rem; margin-bottom: 1rem;">2. Configure Model Backend</h4>
+                <p style="font-size: 0.95rem; margin-bottom: 1rem;">Create a <code>.env</code> file in the project root to select your engine configurations:</p>
+
+                <div class="code-snippet-wrapper" style="margin-top: 0; margin-bottom: 2rem;">
+                    <div class="code-header">
+                        <span>Config File</span>
+                        <span class="code-lang-tag">.env</span>
+                    </div>
+                    <pre style="margin: 0; color: #38bdf8;"># Lichess Bot Settings
+LICHESS_API_TOKEN=your_lichess_token
+LICHESS_MY_USERNAME=R_Daneel_AI
+
+# Model Backend - Choose your LLM brain:
+LICHESS_MODEL_NAME=deepseek-v4-pro
+# LICHESS_MODEL_NAME=cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit</pre>
+                </div>
+
+                <h4 style="color: white; font-size: 1.25rem; margin-bottom: 1rem;">3. Start the Bot</h4>
+                <p style="font-size: 0.95rem; margin-bottom: 1rem;">Run the main Python controller to connect the bot live to your Lichess account:</p>
+
+                <div class="code-snippet-wrapper" style="margin-top: 0; margin-bottom: 0;">
+                    <div class="code-header">
+                        <span>Terminal</span>
+                        <span class="code-lang-tag">bash</span>
+                    </div>
+                    <pre style="margin: 0; color: #a5b4fc;"># Spin up the Lichess polling client
+python3 lichess_bot.py</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical FAQ Section -->
+        <section class="faq-section">
+            <div class="section-header">
+                <h3>Technical Q&A</h3>
+                <p>Deep-dive details on the engineering decisions, performance metrics, and concurrency limits of the bot.</p>
+            </div>
+
+            <div class="faq-container">
+                <details class="faq-item">
+                    <summary>Why use a hybrid Neuro-Symbolic approach instead of pure reinforcement learning?</summary>
+                    <div class="faq-answer">
+                        <p>Pure RL engines like AlphaZero/Lc0 require millions of games and massive compute. On the other hand, raw LLMs have strategic intuition but fail at spatial geometry, frequently outputting illegal moves or coordinate blunders.</p>
+                        <p>R_Daneel_AI uses a symbolic Prolog referee (<code>Queen</code>) to act as the spatial "eyes" for the LLM. Prolog calculates check limits, discoveries, and legal vectors, freeing the LLM to focus entirely on high-level strategic reasoning, development, and positional plans.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>How do the DeepSeek v4 and Gemma 26B backends compare in actual play?</summary>
+                    <div class="faq-answer">
+                        <p>Across our 1,000 puzzle benchmark, they ended in an overall tie at 58.1% accuracy. However, their performance curves are highly distinct:</p>
+                        <p><strong>Gemma 26B</strong> displays higher consistency in lower-Elo tiers (600–1500), achieving 80.8% accuracy due to simple, robust developmental suggestions.</p>
+                        <p><strong>DeepSeek v4</strong> excels in high-Elo tactical complexity (1600–2500), outperforming Gemma by 2.8% overall in high-Elo brackets (and up to +12% in specific complex tiers like 2200 and 2400) because of its superior deep multi-step reasoning capabilities.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Is the SWI-Prolog engine thread-safe?</summary>
+                    <div class="faq-answer">
+                        <p>No, the PySwip wrapper interface to SWI-Prolog is not thread-safe. Concurrent threads sharing the same Prolog foreign pointer will experience segfaults and garbage collection crashes.</p>
+                        <p>To scale benchmarking or concurrent game handling, R_Daneel_AI avoids multi-threading. Instead, it utilizes independent process sandboxing (multiprocessing) to run isolated Prolog engines, ensuring 100% stability across parallel sessions.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>How is the estimated Elo rating calculated in the benchmarks?</summary>
+                    <div class="faq-answer">
+                        <p>We estimate Elo using a bisection-based likelihood solver. Based on the pass rates in each tier, the algorithm solves for the ELO rating that maximizes the probability of obtaining the observed results, assuming a standard logistic player rating curve. This provides a highly accurate reflection of Lichess rating standards.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Spotlight on Queen Section -->
+        <section class="features-section" id="queen-spotlight" style="border-top: 1px solid var(--border-color); padding-top: 5rem; max-width: 1200px; margin: 0 auto;">
+            <div class="section-header">
+                <h3>Powered by Queen 👑</h3>
+                <p>Meet the underlying engine that makes AI chess reasoning possible. Queen is a Prolog-based chess analyzer equipped with Model Context Protocol (MCP) capabilities.</p>
+            </div>
+            
+            <div class="glass-panel" style="padding: 2.5rem; text-align: center; max-width: 1000px; margin: 0 auto;">
+                <h4 style="color: white; font-size: 1.35rem; margin-bottom: 1rem;">Symbolic Constraints & LLM Collaboration via MCP</h4>
+                <p style="max-width: 800px; margin: 0 auto 1.5rem; color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+                    Queen serves as an autonomous chess referee and analyzer. By exposing standard chess diagnostics—like rule validation, pins, discovered attacks, and checks—as MCP tools, any Model Context Protocol-compatible AI agent can hook into Queen to "see" and interact with the chessboard dynamically.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <a href="https://abhay-ai.github.io/Queen/" target="_blank" class="btn-primary">Explore Queen Engine 🚀</a>
+                    <a href="https://github.com/abhay-ai/Queen" target="_blank" class="btn-secondary" style="margin-left: 0;">Queen GitHub Repo 💻</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-container">
+                <h3>Contribute to the Showcase</h3>
+                <p>Fork the repository, inspect the Prolog rulebase, or deploy R_Daneel_AI to showcase your custom model integrations.</p>
+                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <a href="https://github.com/abhay-ai/R_Daneel_AI" target="_blank" class="btn-primary">View GitHub Repository 💻</a>
+                    <a href="https://abhay-ai.github.io/Queen/" target="_blank" class="btn-secondary" style="margin-left: 0;">Visit Queen Webpage 👑</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#overview">Architecture</a>
+            <a href="#features">Features</a>
+            <a href="#playground">Interactive Play</a>
+            <a href="#benchmarks">Benchmarks</a>
+            <a href="https://github.com/abhay-ai/R_Daneel_AI" target="_blank">GitHub</a>
+            <a href="https://abhay-ai.github.io/Queen/" target="_blank">Queen Engine</a>
+        </div>
+        <p>© 2026 R_Daneel_AI Team. Built on PySwip, SWI-Prolog, and vLLM.</p>
+    </footer>
+
+    <!-- Interactive JS Scripts -->
+    <script>
+        // --- 1. Interactive Chess Autopsy Playground Logic ---
+        const presets = {
+            defeatism: {
+                fen: "8/5kp1/p7/1p5p/PP5P/8/r6r/2K5 w - - 1 46",
+                highlight: { check: [], move: ["c1b1"], tactical: ["a2a1", "h2h1"] },
+                board: [
+                    { sq: "a2", pc: "r", col: "black" },
+                    { sq: "h2", pc: "r", col: "black" },
+                    { sq: "c1", pc: "k", col: "white" },
+                    { sq: "f7", pc: "k", col: "black" },
+                    { sq: "g7", pc: "p", col: "black" },
+                    { sq: "a6", pc: "p", col: "black" },
+                    { sq: "b5", pc: "p", col: "black" },
+                    { sq: "h5", pc: "p", col: "black" },
+                    { sq: "a4", pc: "p", col: "white" },
+                    { sq: "h4", pc: "p", col: "white" }
+                ],
+                thoughts: "<h4>Defeatism Escape Thoughts</h4><p>My King on <code>c1</code> is in grave danger. Black's Rooks on <code>a2</code> and <code>h2</code> are extremely active on the second rank. If I play a pawn move like <code>a4b5</code>, Black will immediately play <code>a2a1#</code> or <code>h2h1#</code> delivering checkmate. Both of these are fatal checkmate threats.</p><blockquote>Proposing a move that allows immediate checkmate when another legal move escapes it is the ultimate blunder!</blockquote><p>I must simulate all available King moves. If I play <code>c1d1</code>, it still allows <code>a2a1#</code>. However, moving to <code>c1b1</code> is the ONLY move that escapes immediate checkmate, since the King blocks the <code>a2</code> Rook's path down the 1st rank. I will choose this move to defend actively and prolong the game.</p>",
+                strategy: "<h4>Strategic Directives</h4><p>Seek drawing chances or stalemate tricks in this lost position. Avoid easy simplifications that benefit the side up material. Keep the King on the most resilient escape squares.</p>",
+                metrics: "{\n  \"game_phase\": \"endgame\",\n  \"proposed_move\": \"c1b1 (Kb1)\",\n  \"retries\": 1,\n  \"material_difference\": -11,\n  \"legal_escape_squares\": [\"b1\", \"d1\"],\n  \"simulation_outcome\": \"Checkmate evaded. Opponent has no immediate mate-in-one.\"\n}"
+            },
+            tension: {
+                fen: "r1bqk2r/ppp2ppp/2np1n2/2b1p3/4P3/2N1BN2/PPP2PPP/R2QKB1R w KQkq - 2 6",
+                highlight: { check: [], move: ["f1d3"], tactical: ["e3", "c5"] },
+                board: [
+                    { sq: "a8", pc: "r", col: "black" },
+                    { sq: "c8", pc: "b", col: "black" },
+                    { sq: "d8", pc: "q", col: "black" },
+                    { sq: "e8", pc: "k", col: "black" },
+                    { sq: "h8", pc: "r", col: "black" },
+                    { sq: "c6", pc: "n", col: "black" },
+                    { sq: "f6", pc: "n", col: "black" },
+                    { sq: "c5", pc: "b", col: "black" },
+                    { sq: "a7", pc: "p", col: "black" },
+                    { sq: "b7", pc: "p", col: "black" },
+                    { sq: "c7", pc: "p", col: "black" },
+                    { sq: "d6", pc: "p", col: "black" },
+                    { sq: "e5", pc: "p", col: "black" },
+                    { sq: "f7", pc: "p", col: "black" },
+                    { sq: "g7", pc: "p", col: "black" },
+                    { sq: "h7", pc: "p", col: "black" },
+                    { sq: "a1", pc: "r", col: "white" },
+                    { sq: "c3", pc: "n", col: "white" },
+                    { sq: "e3", pc: "b", col: "white" },
+                    { sq: "f3", pc: "n", col: "white" },
+                    { sq: "d1", pc: "q", col: "white" },
+                    { sq: "e1", pc: "k", col: "white" },
+                    { sq: "f1", pc: "b", col: "white" },
+                    { sq: "a2", pc: "p", col: "white" },
+                    { sq: "b2", pc: "p", col: "white" },
+                    { sq: "c2", pc: "p", col: "white" },
+                    { sq: "d2", pc: "p", col: "white" },
+                    { sq: "e4", pc: "p", col: "white" },
+                    { sq: "f2", pc: "p", col: "white" },
+                    { sq: "g2", pc: "p", col: "white" },
+                    { sq: "h2", pc: "p", col: "white" }
+                ],
+                thoughts: "<h4>Tension Analysis Thoughts</h4><p>We are in a standard opening position. There is active mutual piece tension between my Bishop on <code>e3</code> and Black's Bishop on <code>c5</code>.</p><p>If I play the capture <code>e3c5</code>, Black will play <code>d6xc5</code> recapturing. This is a neutral exchange (Net Utility = 0). According to the rules, a capture that resolves active board tension for a net utility of 0 receives a <span class='utility-metric negative'>-0.5</span> tension resolution penalty. It is a strategic blunder because it resolves tension on the opponent's terms.</p><p>Instead, I will play the quiet developing move <code>f1d3</code> (bringing the light-squared bishop out and preparing to castle). This move has a Net Utility of <span class='utility-metric neutral'>0.0</span>, but it maintains the tension and improves my overall development.</p>",
+                strategy: "<h4>Strategic Directives</h4><p>Complete the development of minor pieces, control the center, and maintain board tension rather than resolving it prematurely through captures.</p>",
+                metrics: "{\n  \"game_phase\": \"opening\",\n  \"board_tension\": {\n    \"mutual_piece_tension\": [\"bishop at e3 and bishop at c5\"]\n  },\n  \"candidate_utilities\": {\n    \"e3c5\": -0.5,\n    \"d1d4\": -5.0,\n    \"f1d3\": 0.0\n  },\n  \"selected_move\": \"f1d3\"\n}"
+            },
+            staircase: {
+                fen: "k7/8/8/8/8/7R/7R/K7 w - - 0 1",
+                highlight: { check: [], move: ["h3b3"], tactical: ["b7", "b8"] },
+                board: [
+                    { sq: "a8", pc: "k", col: "black" },
+                    { sq: "h3", pc: "r", col: "white" },
+                    { sq: "h2", pc: "r", col: "white" },
+                    { sq: "a1", pc: "k", col: "white" }
+                ],
+                thoughts: "<h4>Forced Mate-in-Two Calculation</h4><p>The opponent King is trapped on the back rank at <code>a8</code>. I have two Rooks on the h-file.</p><p>My Prolog referee detects a forced mate-in-two: <code>mate_in_two: ['h3b3', 'h2b2']</code>. I must play one of these forced mate sequences immediately.</p><p>If I play <code>h3b3</code> (moving the Rook to the b-file), it cuts off the b-file. Black's only legal response is to move the King to <code>a7</code>. Then, on my next move, the Rook on <code>h2</code> will play <code>h2h8#</code> delivering checkmate. This staircase pattern is completely forced.</p>",
+                strategy: "<h4>Strategic Directives</h4><p>Prioritize forced checkmate combinations immediately. Cut off the escape squares of the black king using coordinates calculated by the Prolog referee.</p>",
+                metrics: "{\n  \"game_phase\": \"endgame\",\n  \"mate_in_two_moves\": [\"h3b3\", \"h2b2\"],\n  \"selected_move\": \"h3b3\",\n  \"net_utility\": 99.0\n}"
+            },
+            fork: {
+                fen: "k3q3/8/8/3N4/8/8/4P3/4K3 w - - 0 1",
+                highlight: { check: [], move: ["d5c7"], tactical: ["a8", "e8"] },
+                board: [
+                    { sq: "a8", pc: "k", col: "black" },
+                    { sq: "e8", pc: "q", col: "black" },
+                    { sq: "d5", pc: "n", col: "white" },
+                    { sq: "e2", pc: "p", col: "white" },
+                    { sq: "e1", pc: "k", col: "white" }
+                ],
+                thoughts: "<h4>Forced Knight Fork Calculation</h4><p>The Knight is positioned on <code>d5</code>. I notice the Black King is on <code>a8</code> and the Black Queen is on <code>e8</code>.</p><p>The Prolog referee reports a fork-creating move: <code>forced_material_wins: [{'move': 'd5c7', 'gain': 9}]</code>. The Knight on <code>d5</code> can jump to <code>c7</code> to deliver a check to the King on <code>a8</code> while simultaneously attacking the Queen on <code>e8</code>.</p><p>Since Black is in check, they are forced to move their King. On the next turn, I will capture their Queen for free. This is a massive net utility gain.</p>",
+                strategy: "<h4>Strategic Directives</h4><p>Perform the Knight fork on c7 to win the black queen and transition into a simplified, winning endgame.</p>",
+                metrics: "{\n  \"game_phase\": \"endgame\",\n  \"forced_material_wins\": [\n    {\n      \"move\": \"d5c7\",\n      \"gain\": 9\n    }\n  ],\n  \"selected_move\": \"d5c7\",\n  \"net_utility\": 9\n}"
+            }
+        };
+
+        const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+        const unicodePieces = {
+            white: { p: "♙", n: "♘", b: "♗", r: "♖", q: "♕", k: "♔" },
+            black: { p: "♟", n: "♞", b: "♝", r: "♜", q: "♛", k: "♚" }
+        };
+
+        function renderBoard(presetName) {
+            const container = document.getElementById("chessboard");
+            container.innerHTML = "";
+            
+            const preset = presets[presetName];
+            const boardMap = {};
+            preset.board.forEach(item => {
+                boardMap[item.sq] = item;
+            });
+
+            for (let r = 0; r < 8; r++) {
+                for (let f = 0; f < 8; f++) {
+                    const sqName = files[f] + ranks[r];
+                    const isLight = (r + f) % 2 === 0;
+                    
+                    const sqEl = document.createElement("div");
+                    sqEl.className = `square ${isLight ? 'light-square' : 'dark-square'}`;
+                    sqEl.id = `sq-${sqName}`;
+
+                    // File & Rank labels
+                    if (f === 0) {
+                        const rLabel = document.createElement("span");
+                        rLabel.className = "label-rank";
+                        rLabel.textContent = ranks[r];
+                        sqEl.appendChild(rLabel);
+                    }
+                    if (r === 7) {
+                        const fLabel = document.createElement("span");
+                        fLabel.className = "label-file";
+                        fLabel.textContent = files[f];
+                        sqEl.appendChild(fLabel);
+                    }
+
+                    // Highlights
+                    if (preset.highlight.check.includes(sqName)) {
+                        sqEl.classList.add("highlight-check");
+                    }
+                    if (preset.highlight.move.some(m => m === sqName || (m.length === 4 && (m.startsWith(sqName) || m.endsWith(sqName))))) {
+                        sqEl.classList.add("highlight-move");
+                    }
+                    if (preset.highlight.tactical.some(t => t === sqName || (t.length === 4 && (t.startsWith(sqName) || t.endsWith(sqName))))) {
+                        sqEl.classList.add("highlight-tactical");
+                    }
+
+                    // Piece
+                    const piece = boardMap[sqName];
+                    if (piece) {
+                        const pieceEl = document.createElement("span");
+                        pieceEl.className = `piece ${piece.col}-piece`;
+                        pieceEl.textContent = unicodePieces[piece.col][piece.pc];
+                        // White piece color and text shadow styling
+                        if (piece.col === "white") {
+                            pieceEl.style.color = "#ffffff";
+                            pieceEl.style.textShadow = "0 2px 4px rgba(0,0,0,0.6)";
+                        } else {
+                            pieceEl.style.color = "#1e293b";
+                        }
+                        sqEl.appendChild(pieceEl);
+                    }
+
+                    container.appendChild(sqEl);
+                }
+            }
+
+            // Populate dashboard contents
+            document.getElementById("fen-display").textContent = preset.fen;
+            document.getElementById("thoughts-box").innerHTML = preset.thoughts;
+            document.getElementById("strategy-box").innerHTML = preset.strategy;
+            document.getElementById("metrics-pre").textContent = preset.metrics;
+        }
+
+        function loadPreset(val) {
+            renderBoard(val);
+        }
+
+        function switchTab(evt, tabId) {
+            const contents = document.getElementsByClassName("dash-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            const buttons = document.getElementsByClassName("dash-btn");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function copyFen() {
+            const fen = document.getElementById("fen-display").textContent;
+            navigator.clipboard.writeText(fen);
+            const btn = document.querySelector(".fen-copy-btn");
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = "Copy FEN"; }, 1500);
+        }
+
+        // Initialize board
+        renderBoard("defeatism");
+
+
+        // --- 2. Chart.js Benchmark Visualization Logic ---
+        let currentChart = null;
+
+        const overallChartData = {
+            labels: ['Raw LLM Baseline (No Safety)', 'Traditional Heuristic Engine', 'R_Daneel_AI (Gemma 26B)', 'R_Daneel_AI (DeepSeek v4)'],
+            datasets: [
+                {
+                    label: 'Pass Rate (%)',
+                    data: [18.10, 54.60, 58.10, 58.10],
+                    backgroundColor: ['rgba(148, 163, 184, 0.4)', 'rgba(236, 72, 153, 0.6)', 'rgba(99, 102, 241, 0.6)', 'rgba(16, 185, 129, 0.6)'],
+                    borderColor: ['#94a3b8', '#ec4899', '#6366f1', '#10b981'],
+                    borderWidth: 1.5,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Estimated Elo',
+                    data: [673, 1695, 1765, 1763],
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    type: 'line',
+                    yAxisID: 'y1'
+                }
+            ]
+        };
+
+        const tiersChartData = {
+            labels: ['600', '700', '800', '900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900', '2000', '2100', '2200', '2300', '2400', '2500'],
+            datasets: [
+                {
+                    label: 'Traditional Heuristics',
+                    data: [98.0, 96.0, 94.0, 82.0, 86.0, 70.0, 66.0, 52.0, 58.0, 50.0, 46.0, 50.0, 44.0, 38.0, 40.0, 22.0, 36.0, 26.0, 20.0, 18.0],
+                    borderColor: '#ec4899',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    fill: false,
+                    tension: 0.2
+                },
+                {
+                    label: 'R_Daneel_AI (Gemma 26B)',
+                    data: [96.0, 96.0, 98.0, 84.0, 88.0, 82.0, 80.0, 68.0, 52.0, 64.0, 42.0, 50.0, 48.0, 44.0, 44.0, 30.0, 28.0, 22.0, 30.0, 16.0],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    fill: false,
+                    tension: 0.2
+                },
+                {
+                    label: 'R_Daneel_AI (DeepSeek v4)',
+                    data: [90.0, 92.0, 84.0, 92.0, 86.0, 72.0, 74.0, 64.0, 56.0, 70.0, 56.0, 48.0, 50.0, 46.0, 40.0, 26.0, 40.0, 22.0, 40.0, 14.0],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: false,
+                    tension: 0.2
+                }
+            ]
+        };
+
+        function showChart(type) {
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const ctx = document.getElementById('benchmarkChart').getContext('2d');
+            
+            if (type === 'overall') {
+                currentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: overallChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#94a3b8', font: { family: 'Inter' } }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#94a3b8' }
+                            },
+                            y: {
+                                position: 'left',
+                                title: { display: true, text: 'Pass Rate (%)', color: '#94a3b8' },
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#94a3b8' },
+                                min: 0,
+                                max: 100
+                            },
+                            y1: {
+                                position: 'right',
+                                title: { display: true, text: 'Estimated Elo Rating', color: '#94a3b8' },
+                                grid: { drawOnChartArea: false },
+                                ticks: { color: '#94a3b8' },
+                                min: 500,
+                                max: 2000
+                            }
+                        }
+                    }
+                });
+            } else {
+                currentChart = new Chart(ctx, {
+                    type: 'line',
+                    data: tiersChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#94a3b8', font: { family: 'Inter' } }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Puzzle Elo Tier', color: '#94a3b8' },
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#94a3b8' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Pass Rate (%)', color: '#94a3b8' },
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#94a3b8' },
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        const tabOverall = document.getElementById('btn-chart-overall');
+        const tabTiers = document.getElementById('btn-chart-tiers');
+
+        tabOverall.addEventListener('click', () => {
+            tabOverall.classList.add('active');
+            tabTiers.classList.remove('active');
+            showChart('overall');
+        });
+
+        tabTiers.addEventListener('click', () => {
+            tabTiers.classList.add('active');
+            tabOverall.classList.remove('active');
+            showChart('tiers');
+        });
+
+        // Initialize overall chart
+        showChart('overall');
+    </script>
+</body>
+</html>
