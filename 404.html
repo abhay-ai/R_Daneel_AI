@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <style>
+        body {
+            background-color: #030712;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        a {
+            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+    </style>
+    <script>
+        // GitHub Pages Case-Insensitive URL Redirector
+        (function() {
+            var path = window.location.pathname;
+            var search = window.location.search;
+            var hash = window.location.hash;
+            var lowerPath = path.toLowerCase();
+            
+            // Standardize repo path casing (from '/r_daneel_ai/...' to '/R_Daneel_AI/...')
+            if (lowerPath.indexOf("/r_daneel_ai") === 0) {
+                var suffix = path.substring("/r_daneel_ai".length);
+                
+                // Normalize common sub-paths to correct lowercase/uppercase combinations
+                var lowerSuffix = suffix.toLowerCase();
+                var correctedSuffix = suffix;
+                
+                if (lowerSuffix.indexOf("/logs/visualizer.html") === 0) {
+                    correctedSuffix = "/logs/visualizer.html";
+                } else if (lowerSuffix.indexOf("/docs/readme.html") === 0) {
+                    correctedSuffix = "/docs/readme.html";
+                } else if (lowerSuffix.indexOf("/docs/index.html") === 0) {
+                    correctedSuffix = "/docs/index.html";
+                } else if (lowerSuffix === "/index.html" || lowerSuffix === "/index.htm" || lowerSuffix === "/") {
+                    correctedSuffix = "/index.html";
+                } else if (lowerSuffix === "") {
+                    correctedSuffix = "/";
+                }
+                
+                // Perform redirect immediately
+                var redirectUrl = "/R_Daneel_AI" + correctedSuffix + search + hash;
+                window.location.replace(redirectUrl);
+                return;
+            }
+            
+            // If the repo path is already capitalized correctly, but a subdirectory or filename is wrong
+            // e.g. /R_Daneel_AI/Logs/Visualizer.html -> /R_Daneel_AI/logs/visualizer.html
+            if (path.indexOf("/R_Daneel_AI/") === 0) {
+                var suffix = path.substring("/R_Daneel_AI/".length);
+                var lowerSuffix = suffix.toLowerCase();
+                
+                if (lowerSuffix === "logs/visualizer.html") {
+                    window.location.replace("/R_Daneel_AI/logs/visualizer.html" + search + hash);
+                    return;
+                }
+                if (lowerSuffix === "docs/readme.html") {
+                    window.location.replace("/R_Daneel_AI/docs/readme.html" + search + hash);
+                    return;
+                }
+                if (lowerSuffix === "docs/index.html") {
+                    window.location.replace("/R_Daneel_AI/docs/index.html" + search + hash);
+                    return;
+                }
+                if (lowerSuffix === "index.html" || lowerSuffix === "index.css") {
+                    window.location.replace("/R_Daneel_AI/" + lowerSuffix + search + hash);
+                    return;
+                }
+            }
+            
+            // Fallback: Show a styled 404 message if the URL cannot be matched
+            window.addEventListener('DOMContentLoaded', function() {
+                document.body.innerHTML = '<div class="container"><h1>404: Page Not Found</h1><p>We couldn\'t find the page you requested. Click below to return home.</p><a href="/R_Daneel_AI/">Return Home 🏠</a></div>';
+            });
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Redirecting...</h1>
+        <p>Correcting path casing for GitHub Pages...</p>
+    </div>
+</body>
+</html>
